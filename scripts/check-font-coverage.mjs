@@ -41,18 +41,33 @@ const htmlPath = fs.statSync(abs).isDirectory() ? path.join(abs, "index.html") :
 const html = fs.readFileSync(htmlPath, "utf8");
 const reg = JSON.parse(fs.readFileSync(REGISTRY, "utf8"));
 
-const DISPLAY = ["h-display", "h-hero", "h-statement", "h-xl", "h-md", "f-alt", "f-brush", "f-running", "f-kai", "f-sign", "f-hand"];
+const DISPLAY = [
+  "h-display", "h-hero", "h-statement", "h-xl", "h-md",
+  "f-alt", "f-brush", "f-running", "f-kai", "f-sign", "f-hand",
+  "tape-title", "hand", "t-head", "pen", "pen-note",
+];
+const MACOS_CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+const htmlNoComments = html.replace(/<!--[\s\S]*?-->/g, "");
 
 // ---------- 1. 用 Chromium 取每个标题节点的真实计算字体 ----------
 let blocks = [];
 let usedBrowser = true;
 try {
   const pw = await import("playwright");
-  const browser = await pw.chromium.launch();
+  let browser;
+  try {
+    browser = await pw.chromium.launch();
+  } catch (err) {
+    if (fs.existsSync(MACOS_CHROME)) {
+      browser = await pw.chromium.launch({ executablePath: MACOS_CHROME });
+    } else {
+      throw err;
+    }
+  }
   const page = await browser.newPage({ viewport: { width: 1200, height: 900 } });
   await page.goto("file://" + htmlPath, { waitUntil: "load", timeout: 120000 });
   await page.evaluate(async () => {
-    const fams = [...new Set([...document.querySelectorAll(".poster *")].map(n => getComputedStyle(n).fontFamily))];
+    const fams = [...new Set([...document.querySelectorAll(".poster *, .card *, .board *")].map(n => getComputedStyle(n).fontFamily))];
     for (const f of fams) {
       try { await document.fonts.load(`80px ${f}`, "缺字检查常用汉字生僻字测试"); } catch {}
     }
@@ -65,7 +80,7 @@ try {
     const out = [];
     const push = (n, cls2) => {
       const own = [...n.childNodes].filter(x => x.nodeType === 3).map(x => x.textContent).join("").trim();
-      const txt = own || (n.children.length === 0 ? n.textContent.trim() : "");
+      const txt = cls2 ? n.textContent.trim() : (own || (n.children.length === 0 ? n.textContent.trim() : ""));
       if (!txt) return;
       out.push({
         cls: cls2 || [...n.classList].join(".") || n.tagName.toLowerCase(),
@@ -74,7 +89,7 @@ try {
       });
     };
     for (const c of cls) for (const n of document.querySelectorAll("." + c)) push(n, c);
-    for (const n of document.querySelectorAll(".poster *")) {
+    for (const n of document.querySelectorAll(".poster *, .card *, .board *")) {
       const fam = getComputedStyle(n).fontFamily.split(",")[0].replace(/["']/g, "").trim();
       if (lower.has(fam.toLowerCase())) push(n);
     }
@@ -85,7 +100,7 @@ try {
   usedBrowser = false;
   const classAlt = DISPLAY.join("|");
   const re = new RegExp(`<([a-zA-Z][\\w-]*)\\b[^>]*class="[^"]*\\b(?:${classAlt})\\b[^"]*"[^>]*>([\\s\\S]*?)</\\1>`, "g");
-  for (const m of html.matchAll(re)) {
+  for (const m of htmlNoComments.matchAll(re)) {
     const txt = m[2].replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
     if (txt) blocks.push({ cls: (m[0].match(/class="([^"]*)"/) || [, ""])[1], txt, family: null });
   }
@@ -160,9 +175,9 @@ for (const id of usedFonts) {
   coverage.set(id, parseRanges(css));
 }
 
-// ---------- 3. fallback 检查（只看含花体字的 font-family 声明） ----------
+// ---------- 3. fallback 检查（只看含花体字的 font-family / 字体变量声明） ----------
 const fallbackIssues = [];
-for (const m of html.matchAll(/font-family\s*:\s*([^;}]+)[;}]/g)) {
+for (const m of htmlNoComments.matchAll(/(?:font-family|--f-tape|--f-hand|--display-alt|--display-zh)\s*:\s*([^;}]+)[;}]/g)) {
   const decl = m[1].trim();
   const hit = reg.fonts.find(f => decl.includes(f.family));
   if (!hit) continue;

@@ -87,11 +87,12 @@ The skill includes a reusable helper at `assets/magazine-bg-webgl.js`. Copy or i
 
 Use Playwright or an equivalent browser screenshot workflow:
 
-1. Open `index.html`.
-2. Wait for fonts and images.
-3. Screenshot each frame node by id.
-4. Save to `output/`.
-5. Verify dimensions.
+1. Open `index.html` (if Playwright's bundled `chromium_headless_shell` is not installed on macOS, launch with `executablePath: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`).
+2. Wait for `document.fonts.ready` and images.
+3. For cards with rotated calligraphy titles (such as `template-xhs-card.html` `.tape-title`), render with `deviceScaleFactor: 2` and downsample to `1080×1440` (`sips -z 1440 1080 output/*.png`) so rotated brush strokes stay crisp without 1x bilinear blur. Ensure `.tape-title` / `.hand` keep `font-weight: 400; font-synthesis: none`.
+4. Screenshot each frame node by id.
+5. Save to `output/`.
+6. Verify dimensions.
 
 If using WebGL or procedural canvas backgrounds:
 

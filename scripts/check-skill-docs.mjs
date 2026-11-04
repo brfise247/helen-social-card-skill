@@ -169,6 +169,98 @@ mustInclude(
   "handoff records Live Photo execution pitfall",
 );
 
+mustInclude(
+  "DESIGN-xhs.md",
+  "X01 真仓大片",
+  "DESIGN-xhs defines X01 full-bleed cover as default",
+);
+mustInclude(
+  "DESIGN-xhs.md",
+  "X02 骑缝封箱",
+  "DESIGN-xhs defines X02 seam-taped comparison recipe",
+);
+mustInclude(
+  "DESIGN-xhs.md",
+  "X03 国际提单",
+  "DESIGN-xhs defines X03 freight manifest recipe",
+);
+mustInclude(
+  "DESIGN-xhs.md",
+  "X04 实物批注",
+  "DESIGN-xhs defines X04 detail callout recipe",
+);
+mustInclude(
+  "DESIGN-xhs.md",
+  "X05 核对清单",
+  "DESIGN-xhs defines X05 checklist recipe",
+);
+mustInclude(
+  "DESIGN-xhs.md",
+  "defaultEnabled: false",
+  "DESIGN-xhs disables .tally by default",
+);
+mustInclude(
+  "DESIGN-xhs.md",
+  "font-synthesis: none",
+  "DESIGN-xhs enforces calligraphy anti-blur font-synthesis rule",
+);
+mustInclude(
+  "DESIGN-xhs.md",
+  "禁止把封面切成「上半照片 + 下半满宽贴边死白底",
+  "DESIGN-xhs documents vetoed flat-bottom split-card cover anti-pattern",
+);
+mustInclude(
+  "SKILL.md",
+  "Use the 封箱 (Taped Shut) template (`X01`–`X05`)",
+  "SKILL.md routes Meixi XHS notes to X01-X05 recipes",
+);
+mustInclude(
+  "SKILL.md",
+  "Do NOT render `.tally`（「正」字）unless the user explicitly requests a pitfall-counting",
+  "SKILL.md guards .tally as explicit opt-in only",
+);
+mustInclude(
+  "assets/template-xhs-card.html",
+  'data-recipe="X01"',
+  "XHS seed template includes X01",
+);
+mustInclude(
+  "assets/template-xhs-card.html",
+  'data-recipe="X02"',
+  "XHS seed template includes X02",
+);
+mustInclude(
+  "assets/template-xhs-card.html",
+  'data-recipe="X03"',
+  "XHS seed template includes X03",
+);
+mustInclude(
+  "assets/template-xhs-card.html",
+  'data-recipe="X04"',
+  "XHS seed template includes X04",
+);
+mustInclude(
+  "assets/template-xhs-card.html",
+  'data-recipe="X05"',
+  "XHS seed template includes X05",
+);
+mustInclude(
+  "assets/template-xhs-card.html",
+  "font-synthesis: none",
+  "XHS seed template prevents calligraphy faux-bold synthesis",
+);
+checks.push(() => {
+  const activeHtml = fileText("assets/template-xhs-card.html").replace(/<!--[\s\S]*?-->/g, "");
+  const ok = !/<svg[^>]*class="[^"]*\btally\b/.test(activeHtml);
+  return {
+    ok,
+    label: "XHS seed template has no active .tally SVG by default",
+    detail: ok
+      ? "assets/template-xhs-card.html keeps .tally commented out by default"
+      : "assets/template-xhs-card.html must not contain active <svg class=\"tally\"> by default",
+  };
+});
+
 let failed = 0;
 for (const run of checks) {
   const result = run();

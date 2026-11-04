@@ -4,12 +4,13 @@
  *
  *   node validate-social-deck.mjs <task-dir|index.html>
  *
- * Checks each <section class="poster …"> in the target HTML against the rules
- * codified in SKILL.md / qa-checklist.md / components.md. Exits 1 if any FAIL.
+ * Checks each <section class="poster …"> or <section class="card …"> in the target HTML
+ * against the rules codified in SKILL.md / DESIGN-xhs.md / qa-checklist.md / components.md.
+ * Exits 1 if any FAIL.
  *
  * Rules implemented:
- *   R1  overflow              scrollHeight > clientHeight on the poster
- *   R2  footer collision      .foot is position:absolute AND content above reaches into its band
+ *   R1  overflow              scrollHeight > clientHeight on the poster/card
+ *   R2  footer collision      .foot / .airmail is position:absolute AND text extends into its band
  *   R3  swiss bold display    .h-xl / .h-hero / .h-statement / .num-mega with computed weight >= 600
  *   R4  min readable font     body/lead/caption/label/meta below the mobile-safe floor
  *   R5  4-band density        on 3:4 boards: <75% filled OR any under-filled band > 216px
@@ -19,11 +20,25 @@
  *   R9  title gap              display title touches the next content block
  *   R10 花体字作用域/族名      data-title-font 生效时花体字只许出现在封面级显示标题上，
  *                              且 font-family 必须写 CSS 族名而不是中文字体名
+ *   R11 花体字伪粗体防糊      单字重花体字（如仓耳周珂正大榜书/千图笔锋手写体）computedWeight >= 600 会触发伪粗体糊字
+ *   R12 小红书封箱专属守卫    拦截已否决的「上图+下满宽贴边死白底列表」封面，并对可选组件 .tally（「正」字）给出启用核对提醒
  */
 import { chromium } from "playwright";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import fs from "node:fs";
+
+const MACOS_CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
+async function launchChromium(extraArgs = []) {
+  try {
+    return await chromium.launch({ args: extraArgs });
+  } catch (err) {
+    if (fs.existsSync(MACOS_CHROME)) {
+      return await chromium.launch({ executablePath: MACOS_CHROME, args: extraArgs });
+    }
+    throw err;
+  }
+}
 
 const args = process.argv.slice(2);
 let target = null;
@@ -33,7 +48,7 @@ for (const a of args) {
   else if (!target) target = a;
 }
 if (!target) {
-  console.error("usage: node validate-social-deck.mjs <task-dir|index.html> [--style=swiss|editorial]");
+  console.error("usage: node validate-social-deck.mjs <task-dir|index.html> [--style=swiss|editorial|xhs]");
   process.exit(2);
 }
 const abs = path.resolve(target);
@@ -47,9 +62,10 @@ if (!fs.existsSync(htmlPath)) {
 }
 
 const url = "file://" + htmlPath;
-const browser = await chromium.launch({
-  args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"],
-});
+const browser = await launchChromium([
+  "--use-angle=swiftshader",
+  "--enable-unsafe-swiftshader",
+]);
 const ctx = await browser.newContext({
   viewport: { width: 1400, height: 1700 },
   deviceScaleFactor: 1,
@@ -62,6 +78,7 @@ const style = styleOverride || await page.evaluate(() => {
   const html = document.documentElement;
   if (html.dataset.theme) return "editorial";
   if (html.dataset.accent) return "swiss";
+  if (document.querySelector("section.card") && (html.dataset.brand || document.querySelector(".tape"))) return "xhs";
   // Fallback: any display class using a serif family = editorial; otherwise swiss.
   // Note: "sans-serif" generic name also contains the substring "serif", so we
   // match on serif-only families by token, not substring.
@@ -73,7 +90,7 @@ const style = styleOverride || await page.evaluate(() => {
   return "swiss";
 });
 
-const sections = await page.$$("section.poster");
+const sections = await page.$$("section.poster, section.card");
 const report = [];
 
 // "Obviously too small" floors — below these, text becomes unreadable at phone size.
@@ -175,7 +192,8 @@ for (const s of sections) {
         parseFloat(cs.borderBottomWidth) >= 1 ||
         cssColorVisible(cs.backgroundColor)
       ));
-      const hasBoxFill = cssColorVisible(cs.backgroundColor) &&
+      const beforeBg = getComputedStyle(n, "::before").backgroundColor;
+      const hasBoxFill = (cssColorVisible(cs.backgroundColor) || cssColorVisible(beforeBg)) &&
         r.width * r.height >= 1600 &&
         !["MAIN", "SECTION"].includes(tag);
       const hasBorderBox = (parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth) +
@@ -246,10 +264,11 @@ for (const s of sections) {
   // R2 footer collision — only flag leaf text or media nodes, not containers
   // whose bbox merely shares y-space with an absolute-positioned strip.
   const footIssue = await s.evaluate(el => {
-    const foot = el.querySelector(".foot, .issue-strip, .magazine-foot");
+    const foot = el.querySelector(".foot, .issue-strip, .magazine-foot, .airmail:not(.top), .airmail-edge.bottom, .airmail-edge.bot");
     if (!foot) return null;
     const cs = getComputedStyle(foot);
     if (cs.position !== "absolute") return null;
+    const isAirmail = foot.matches(".airmail, .airmail-edge");
     const footTop = foot.offsetTop;
     const er = el.getBoundingClientRect();
     const hasOwnText = n => {
@@ -264,7 +283,9 @@ for (const s of sections) {
     const posterArea = el.clientWidth * el.clientHeight;
     for (const node of el.querySelectorAll("*")) {
       if (node === foot || foot.contains(node)) continue;
-      if (!hasOwnText(node) && !isMedia(node)) continue;
+      // On XHS cards, full-bleed background photos/wells intentionally run behind the 12px .airmail edge;
+      // only check leaf text nodes against .airmail so text never collides with the bottom trim.
+      if (isAirmail ? !hasOwnText(node) : (!hasOwnText(node) && !isMedia(node))) continue;
       const r = node.getBoundingClientRect();
       // Skip full-bleed background layers (>=95% of poster area + position:absolute).
       const ncs = getComputedStyle(node);
@@ -274,14 +295,22 @@ for (const s of sections) {
         const overlap = bottom - footTop;
         if (overlap > worstOverlap) {
           worstOverlap = overlap;
-          worstSel = node.className ? "." + node.className.split(" ").filter(Boolean).join(".") : node.tagName.toLowerCase();
+          worstSel = node.className ? "." + String(node.className).split(" ").filter(Boolean).join(".") : node.tagName.toLowerCase();
         }
       }
     }
-    return worstOverlap > 6 ? { overlap: Math.round(worstOverlap), sel: worstSel, footTop } : null;
+    return worstOverlap > 4 ? { overlap: Math.round(worstOverlap), sel: worstSel, footTop, isAirmail } : null;
   });
   if (footIssue) {
-    fails.push({ rule: "R2", msg: `.foot is position:absolute, ${footIssue.sel} extends ${footIssue.overlap}px past foot top`, fix: "switch .foot to flex margin-top:auto (see style-system.md Anti-pattern C)" });
+    fails.push({
+      rule: "R2",
+      msg: footIssue.isAirmail
+        ? `${footIssue.sel} extends ${footIssue.overlap}px into bottom .airmail edge`
+        : `.foot is position:absolute, ${footIssue.sel} extends ${footIssue.overlap}px past foot top`,
+      fix: footIssue.isAirmail
+        ? "increase bottom padding above .airmail (at least 36-48px) or compact vertical gaps"
+        : "switch .foot to flex margin-top:auto (see style-system.md Anti-pattern C)",
+    });
   }
 
   // R3 swiss bold display
@@ -327,11 +356,11 @@ for (const s of sections) {
         }
       }
     };
-    test(".body, p.body", "body", MIN.body);
-    test(".lead", "lead", MIN.lead);
-    test(".kicker, .cap, .caption, .swiss-img-caption, .h-sub", "caption", MIN.caption);
-    test(".meta, .label, .mono", "meta", MIN.meta);
-    test(".matrix-fill .cell-title, .brief-card .title, .char-grid .name", "cellTitle", MIN.cellTitle);
+    test(".body, p.body, .why, .spec-desc", "body", MIN.body);
+    test(".lead, .slip-title, .act, .act-main", "lead", MIN.lead);
+    test(".kicker, .cap, .caption, .swiss-img-caption, .h-sub, .route-col .tip, .slip-item .sub", "caption", MIN.caption);
+    test(".meta, .label, .mono, .mono-label, .spec-label, .pending", "meta", MIN.meta);
+    test(".matrix-fill .cell-title, .brief-card .title, .char-grid .name, .route-col .way, .slip-item .main", "cellTitle", MIN.cellTitle);
     test(".stat-card .lbl, .ledger .sub, .num .sub", "numAnnotation", MIN.numAnnotation);
     return out;
   }, MIN_FONT);
@@ -384,7 +413,9 @@ for (const s of sections) {
         const isImg = tag === "IMG" || tag === "CANVAS" || tag === "SVG"
                     || (cs.backgroundImage && cs.backgroundImage !== "none");
         const isRule = tag === "HR" || (parseFloat(cs.borderTopWidth) >= 1 && r.height < 4);
-        const hasFill = cs.backgroundColor && !cs.backgroundColor.match(/rgba?\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0?\s*\)/) && cs.backgroundColor !== "transparent";
+        const beforeBg = getComputedStyle(n, "::before").backgroundColor;
+        const isVisColor = c => c && !c.match(/rgba?\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0?\s*\)/) && c !== "transparent";
+        const hasFill = isVisColor(cs.backgroundColor) || isVisColor(beforeBg);
         if (!isText && !isImg && !isRule && !hasFill) continue;
         const top = Math.max(0, Math.floor(r.top - er.top));
         const bot = Math.min(H, Math.ceil(r.bottom - er.top));
@@ -508,19 +539,63 @@ for (const s of sections) {
     });
   }
 
+  // R12 小红书「封箱」专属守卫（可选组件 .tally 提醒 + 否决的满宽平切白底封面拦截）
+  if (style === "xhs") {
+    const xhsCheck = await s.evaluate((el, isFirst) => {
+      const er = el.getBoundingClientRect();
+      const tallies = [...el.querySelectorAll(".tally")].filter(t => {
+        const r = t.getBoundingClientRect();
+        return r.width > 0 && r.height > 0 && getComputedStyle(t).display !== "none" && getComputedStyle(t).visibility !== "hidden";
+      });
+      let vetoedFlatCover = false;
+      const isCover = isFirst || el.id === "xhs-01" || el.dataset.recipe === "X01";
+      const isManifest = el.classList.contains("manifest") || el.dataset.recipe === "X03";
+      const hasSeamTape = Boolean(el.querySelector(".seam-tape, .seam-tape-wrap")) || el.dataset.recipe === "X02";
+      if (isCover && !isManifest && !hasSeamTape) {
+        for (const n of el.children) {
+          if (n.matches(".photo-well, .bg-vignette, .airmail, .airmail-edge, .cover-shell, .hero-tape, .tape, .sticker, svg")) continue;
+          const cs = getComputedStyle(n);
+          const bg = cs.backgroundColor;
+          const isOpaqueLight = bg && !/rgba?\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0?\s*\)|transparent/.test(bg);
+          const hasPerf = (cs.maskImage && cs.maskImage !== "none") || (cs.webkitMaskImage && cs.webkitMaskImage !== "none") || n.classList.contains("perf");
+          const r = n.getBoundingClientRect();
+          if (isOpaqueLight && !hasPerf && r.width >= el.clientWidth - 24 && (r.bottom - er.top) >= el.clientHeight - 24 && r.height >= 300 && r.height <= 760) {
+            vetoedFlatCover = true;
+            break;
+          }
+        }
+      }
+      return { hasTally: tallies.length > 0, vetoedFlatCover };
+    }, report.length === 0);
+
+    if (xhsCheck.hasTally) {
+      warns.push({
+        rule: "R12",
+        msg: `检测到「正」字计数 (.tally) —— 该组件默认禁用，仅在用户明确要求写「数坑帖 / N个容易出错的点」时允许启用`,
+        fix: "若非用户点名的数坑帖，请移除 .tally 标签块（见 DESIGN-xhs.md）",
+      });
+    }
+    if (xhsCheck.vetoedFlatCover) {
+      fails.push({
+        rule: "R12",
+        msg: `封面出现「上图 + 下满宽贴边平切白底块」（已否决的 SaaS/PPT 割裂列表风）`,
+        fix: "封面请改用 X01 真仓大片配方：100% 满版仓库实拍铺底 + 四周留有 52px 安全边距的悬浮回执卡 (.floating-slip)",
+      });
+    }
+  }
+
   report.push({ meta, fails, warns });
 }
 
-// R10 花体字作用域 + 族名误用（整份文档只跑一次）
+// R10 花体字作用域 + 族名误用 & R11 花体字伪粗体防糊（整份文档只跑一次）
 {
   const r10 = await page.evaluate(({ allowed, families }) => {
-    const out = { enabled: false, scoped: [], mismatch: [], greenbook: false };
+    const out = { enabled: false, scoped: [], mismatch: [], fauxBold: [], greenbook: false };
     const root = document.documentElement;
     out.greenbook = document.querySelectorAll('[class~="board"]').length > 0;
 
-    // 取「这一页实际生效的花体字」：Editorial/Swiss 走 --display-alt，Greenbook 走 --display-zh。
-    // 两个变量都读，谁命中字库就用谁，避免为模板写死分支。
     const libFams = new Set(families.map(f => f.family.toLowerCase()));
+    const famMap = new Map(families.map(f => [f.family.toLowerCase(), f]));
     const readVar = n => getComputedStyle(root).getPropertyValue(n).trim();
     const pick = raw => {
       for (const part of raw.split(",")) {
@@ -540,13 +615,11 @@ for (const s of sections) {
         const fam = getComputedStyle(n).fontFamily.toLowerCase();
         if (!fam.includes(altL)) continue;
         const pFam = n.parentElement ? getComputedStyle(n.parentElement).fontFamily.toLowerCase() : "";
-        if (pFam.includes(altL)) continue;   // 继承来的，不是这一层引入的
+        if (pFam.includes(altL)) continue;
         const text = n.textContent.trim();
         if (!text) continue;
         const size = Math.round(parseFloat(getComputedStyle(n).fontSize));
         out.scoped.push({
-          // 允许的节点必须同时满足：类名在允许集里，且字号达到显示标题级（>=72px）。
-          // 只查类名会让 <p class="body f-alt"> 这种"给正文挂 .f-alt"溜过去。
           ok: [...n.classList].some(c => allowedSet.has(c)) && size >= 72,
           size,
           posterIdx: posters.findIndex(p => p.contains(n)),
@@ -556,12 +629,31 @@ for (const s of sections) {
       }
     }
 
-    // 族名误用：font-family 写了中文字体名，webfont 其实没被用上
+    // 族名误用 + R11 花体字伪粗体检查（覆盖 .poster / .board / .card）
     const zhSet = new Set(families.map(f => f.zh));
-    for (const n of document.querySelectorAll('[class~="poster"] *, [class~="board"] *')) {
-      const first = getComputedStyle(n).fontFamily.split(",")[0].replace(/["']/g, "").trim();
+    const hasOwnText = n => {
+      for (const c of n.childNodes) {
+        if (c.nodeType === 3 && c.textContent.trim().length > 0) return true;
+      }
+      return false;
+    };
+    for (const n of document.querySelectorAll('[class~="poster"] *, [class~="board"] *, [class~="card"] *')) {
+      const cs = getComputedStyle(n);
+      const first = cs.fontFamily.split(",")[0].replace(/["']/g, "").trim();
       if (zhSet.has(first) && !families.some(f => f.family.toLowerCase() === first.toLowerCase())) {
         out.mismatch.push({ where: [...n.classList].join(".") || n.tagName.toLowerCase(), name: first, text: n.textContent.trim().slice(0, 18) });
+      }
+      if (hasOwnText(n) && (famMap.has(first.toLowerCase()) || n.matches(".tape-title, .hand"))) {
+        const w = parseInt(cs.fontWeight, 10) || 400;
+        if (w >= 600) {
+          const hit = famMap.get(first.toLowerCase());
+          out.fauxBold.push({
+            where: [...n.classList].join(".") || n.tagName.toLowerCase(),
+            font: hit ? hit.zh : first,
+            weight: w,
+            text: n.textContent.trim().replace(/\s+/g, " ").slice(0, 18),
+          });
+        }
       }
     }
     return out;
@@ -601,6 +693,22 @@ for (const s of sections) {
   }
   if (r10Fails.length) {
     report.push({ meta: { id: "R10", dataId: "花体字", board: "document", doc: true }, fails: r10Fails, warns: [] });
+  }
+
+  const r11Fails = [];
+  const seenFaux = new Set();
+  for (const fb of r10.fauxBold) {
+    const k = fb.where + "|" + fb.font + "|" + fb.text;
+    if (seenFaux.has(k)) continue;
+    seenFaux.add(k);
+    r11Fails.push({
+      rule: "R11",
+      msg: `.${fb.where} "${fb.text}" 使用单字重花体字「${fb.font}」却计算出 font-weight: ${fb.weight}（触发浏览器伪粗体合成，导致笔画飞白糊死成白团）`,
+      fix: "在标题/手写类上显式声明 font-weight: 400 !important; font-synthesis: none; 严禁继承 h1/h2/strong 的默认 700 粗体",
+    });
+  }
+  if (r11Fails.length) {
+    report.push({ meta: { id: "R11", dataId: "花体字防糊", board: "document", doc: true }, fails: r11Fails, warns: [] });
   }
 }
 
@@ -646,7 +754,7 @@ for (const { meta, fails, warns } of report) {
 }
 
 lines.push("");
-lines.push(`Legend: R1 overflow · R2 footer collision · R3 swiss bold display · R4 min font · R5 4-band density · R6 h-xl cap · R7 figure margin drift · R8 visual bounds · R9 title gap · R10 花体字作用域/族名`);
+lines.push(`Legend: R1 overflow · R2 footer collision · R3 swiss bold display · R4 min font · R5 4-band density · R6 h-xl cap · R7 figure margin drift · R8 visual bounds · R9 title gap · R10 花体字作用域/族名 · R11 花体字防伪粗体糊字 · R12 小红书封箱守卫`);
 lines.push(`Exit code 1 only on FAIL. Warnings are advisory.`);
 
 console.log(lines.join("\n"));
