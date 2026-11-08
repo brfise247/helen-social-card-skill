@@ -1,6 +1,6 @@
 # Handoff — helen-social-card-skill
 
-最后更新：2026-07-01 · 版本：v0.15（Live Photo 生产规则：3s/5s 平台限制、拼图版式、长视频处理、发布提醒、可见文案与不自造规则）
+最后更新：2026-11-09 · 版本：v0.16（品牌迁移：英博伦 Embolen「翻到起毛边」单品牌设计系统；小红书与公众号图片消息两套模板重建；旧物流卡系统整体移除）
 
 这份文档只记录**事实**：当前 skill 由哪些文件组成、每个文件管什么、本轮更新改了什么、怎么验证它还能跑。想读"为什么这样做"或"未来要怎么走"，去看 `PRODUCT.md`。
 
@@ -13,11 +13,17 @@
 ```
 helen-social-card-skill/
 ├── SKILL.md                   # 7 步工作流入口
+├── DESIGN.md                  # 英博伦 Embolen 品牌设计真源（一套品牌系统 + 两个平台外壳，v0.16 重写）
+├── CLAUDE.md                  # 本仓协作规则（分发 / 提交 / 视觉约束）
+├── AGENT.md                   # Agent 工作约定（目录 / Design System）
+├── README.md / README.en.md   # 中英说明
 ├── HANDOFF.md                 # 本文件
 ├── PRODUCT.md                 # 产品思考
 ├── assets/
 │   ├── template-editorial-card.html   # 杂志风种子
 │   ├── template-swiss-card.html       # 瑞士风种子
+│   ├── template-xhs-card.html         # 英博伦 Embolen 小红书书页种子（C01/C02 + P01–P08，v0.16 重建）
+│   ├── template-greenbook-card.html   # 英博伦 Embolen 公众号图片消息种子（W01 + P01–P08，v0.16 重建）
 │   ├── magazine-bg-webgl.js           # WebGL 墨流背景
 │   └── screenshot-backgrounds/        # 9 张 WebP 截图舞台底（v0.14 从 PPT skill port）
 │       ├── style-a/                   #   5 张 Editorial（dune / forest-ink / indigo-porcelain / kraft-paper / monocle-classic）
@@ -38,6 +44,11 @@ helen-social-card-skill/
 │   ├── title-shortener.md     公众号 1:1 短标题
 │   ├── category-cookbook.md   小红书 11 个品类的版式路由
 │   ├── live-photo-production.md Live Photo 生产、拼图、长视频与发布规范
+│   ├── greenbook-specs.md     公众号图片消息平台规格 + W01 裁切安全带（v0.16 重写）
+│   ├── brand-presets/
+│   │   └── embolen.md         英博伦品牌预设（色板 / 使用规则 / 内容边界，v0.16 新增）
+│   ├── font-library.md        52 款免费商用中文花体字库（Editorial / Swiss 用）
+│   ├── font-license-audit.md  字库授权核验记录
 │   └── qa-checklist.md        交付前 checklist
 ├── agents/
 │   └── openai.yaml            # 子代理配置（备用）
@@ -46,18 +57,14 @@ helen-social-card-skill/
 │   ├── make-video-contact-sheet.py # Live Photo 视频抽帧 contact sheet
 │   ├── package-live-photo.py      # JPG+MOV 打包为 .pvt 的入口
 │   └── *.swift                    # Apple Live Photo metadata helper
-├── validate-social-deck.mjs   # R1-R9 渲染后校验器
+├── validate-social-deck.mjs   # R1-R12 渲染后校验器（v0.16 R12 改为英博伦书封守卫）
 ├── package.json / package-lock.json / node_modules   # 仅 playwright
 ├── .gitignore                 # v0.13 新增
 └── local-tests/               # 本地测试与素材（git 忽略，不随 skill 分发）
-    ├── demo-*                 # 各次设计案例（kyoto / yading / wukong / kit-* / zzz-* / m16-camping / eyeliner / showcase / smoke-editorial-travel / map-component / screenshot-treatment / multi-platform）
-    ├── social-card-*          # 历史与 Codex 外部测试产物（含 codex-remote-* / wukong-breakout / kyoto-guide / moon-eyes-lip-mud）
-    ├── smoke-ai-tools/        # v0.6 冒烟测试样例
-    ├── test-dark-theme-elden-ring/  # v0.12 Midnight Ink 验证
-    ├── Image/                 # 用户上传的测试图
-    ├── 全图封面参考/           # v0.10 杂志封面参考图
-    ├── .codepilot-uploads/    # 历史上传缓存
-    └── *.cjs                  # 旧的 debug / probe / render 脚本
+    ├── yingbolun-brand/       # v0.16 品牌方向设计稿与批准样张（preview / output/cards）
+    ├── rebrand-xhs/           # v0.16 小红书书页模板渲染验证（render.cjs + output PNG）
+    ├── rebrand-wechat/        # v0.16 公众号图片消息模板渲染验证（render.cjs + output PNG）
+    └── render-check/          # 通用 Playwright 渲染脚本
 ```
 
 v0.13 起：git 仓库。`local-tests/` 整目录在 `.gitignore` 中，commit 只跟踪 skill 内容。
@@ -69,12 +76,13 @@ v0.13 起：git 仓库。`local-tests/` 整目录在 `.gitignore` 中，commit �
 | 维度 | 数量 |
 | --- | --- |
 | 工作流步骤 | 7 步（Intake → Extract → Style → Plan → Seed → Build → Image → Deliver） |
-| 风格模式 | 2 个（Editorial Magazine × E-ink / Swiss International） |
-| 主题色 | Editorial 6 套（5 浅 + 1 暗 Midnight Ink）+ Swiss 4 套 = 10 套 |
+| 风格模式 | 3 个（Editorial Magazine × E-ink / Swiss International / 英博伦 Embolen「翻到起毛边」品牌系统） |
+| 主题色 | Editorial 6 套（5 浅 + 1 暗 Midnight Ink）+ Swiss 4 套 = 10 套；英博伦品牌层固定一套（不换主题） |
 | 版式骨架 | Editorial 16 个（M01-M16）+ Swiss 12 个（S01-S12）= 28 个 |
-| 平台 × 比例 | 小红书 3:4 / 1:1，微信 21:9 + 1:1 配对，方封面 1:1 |
+| 品牌配方 | 11 个：封面 `C01` / `C02` + 内页 `P01`–`P08`（两平台共用）+ 公众号首图 `W01` |
+| 平台 × 比例 | 小红书 3:4 / 1:1，微信 21:9 + 1:1 配对，方封面 1:1，公众号图片消息 3:4 + 16:9 / 2.35:1 裁切验证 |
 | 小红书品类覆盖 | 11 个品类中 7 个完整支持，4 个需用户提供素材，4 个明确不接 |
-| 种子模板 | 2 份（Editorial / Swiss），单文件即含全部 class 与字体 |
+| 种子模板 | 4 份（Editorial / Swiss / 英博伦小红书 / 英博伦公众号图片消息），单文件即含全部 class 与字体 |
 | 已交付案例 | 7 个 demo（2 个 image-cover + 5 个 kit） |
 | Live Photo 支持 | 小红书 `5s` / 微信公众号 `3s`；单视频、二宫格、三宫格、四宫格、三连拼图、长视频低成本诊断 |
 
@@ -83,6 +91,34 @@ v0.13 起：git 仓库。`local-tests/` 整目录在 `.gitignore` 中，commit �
 ## 3. 版本历史
 
 仅记录"什么时候新增/变更了哪些可见资产"，不记录文风调整。
+
+### v0.16 · 2026-11-09（本轮）
+
+主题：**品牌整体迁移到英博伦 Embolen（1–12 岁英语学习成长品牌，主张「温暖的陪伴孩子成长」），重写为「翻到起毛边」单品牌设计系统**。原「美西转运 / MeixiPro」的物流卡系统（公众号 Greenbook「算式」G01–G07、小红书「封箱」X01–X05、租户色板 meixipro / bjd / jy）整体移除；两套模板重建为同一套品牌层 + 两个平台外壳。
+
+**新增**
+- `DESIGN.md` 重写为英博伦 Embolen「翻到起毛边」品牌设计系统：米纸 `#FAF6EC` / 蓝墨 `#193B6F` / 荧光笔 `#ECB957` / 鲸鱼蓝 `#4793D0`，六个 OFL 1.1 字面（Noto Serif SC 900、Noto Sans SC、Yozai、Literata、Andika、Charis SIL），书脊 / 页脚 / 折角 / 荧光条四个装订装置，配方 `C01`/`C02` 封面 + `P01`–`P08` 内页 + 公众号首图 `W01`，封面解剖与 16:9 / 2.35:1 裁切安全带。
+- `references/brand-presets/embolen.md`：英博伦品牌预设（身份表、`[data-brand="embolen"]` 色板、使用规则与内容边界）。
+- `assets/template-xhs-card.html` 重建：英博伦小红书 3:4 书页种子模板，10 个 `.card` 骨架（封面 `C01`/`C02` + 内页 `P01`–`P08`）。
+- `assets/template-greenbook-card.html` 重建：英博伦公众号图片消息 3:4 种子模板，`W01` 首图 + `P01`–`P08` 内页，`body[data-guides="on"]` 裁切参考层。
+- 品牌级校验：`validate-social-deck.mjs` 的 R12 改为英博伦书封守卫（封面须有 `.spine` + `.foot`、仍否决「上照片 + 下满宽贴边死白底列表」封面、旧 `.tally` 残留只告警）。
+
+**修改**
+- `references/greenbook-specs.md` 重写为公众号图片消息平台规格 + `W01` 首图与 `P01`–`P08` 复用表；删除物流配方与租户语义。
+- `SKILL.md`：What To Produce / Required References / Step 3 品牌系统说明 / Step 4.5 种子模板 / Intake 品牌底线 / Step 5 导出验证 / Non-Negotiables 全部改为英博伦书页系统；删除对 `DESIGN-xhs.md` 的引用。
+- `CLAUDE.md`、`AGENT.md`：视觉规则改为「一套品牌系统、两个平台外壳」，指明两份模板、`DESIGN.md` 与 `references/greenbook-specs.md`。
+- `README.md` / `README.en.md`：衍生说明改为英博伦 Embolen「翻到起毛边」家庭共读手册卡系统；目录结构补两份品牌模板与品牌预设。
+- `HANDOFF.md`（本文件）：目录结构与数据规模补品牌系统条目。
+
+**删除**
+- `DESIGN-xhs.md`（「封箱」Taped Shut 系统设计真源）。
+- `references/brand-presets/meixipro.md`（含 bjd / jy 多租户口径）。
+- 文档与模板里的物流业务语义：封箱 / 面单回执 / waybill / 仓库实拍 / 集运 / 算式 / 租户。
+
+**验证**
+- 文档层：`grep -rn "美西\|杨美西\|Meixi\|meixipro\|封箱\|waybill\|集运" SKILL.md CLAUDE.md AGENT.md README.md README.en.md references/` 应零命中。
+- 模板层：`node local-tests/rebrand-xhs/render.cjs` + `node validate-social-deck.mjs local-tests/rebrand-xhs`；`node local-tests/rebrand-wechat/render.cjs`（`W01` 标题 / 英文行 / 册号必须落在 y 490–950 安全带内）。
+- 视觉层：封面缩到 360px 仍能认出「蓝块 + 三行宋体 + 荧光条 + 折角」；封面 / 首图 0 logo；`P07` 字段留空、`.pending` 不预填。
 
 ### v0.15 · 2026-07-01（本轮）
 
@@ -404,6 +440,25 @@ npm run test:docs
 
 `quick_validate.py` 只检查 Skill Creator 的基础结构：`SKILL.md`、frontmatter、name / description 合法性。`npm run test:docs` 检查本仓库新增的产品规则：根目录不产出、Live Photo 拼图、M16 图片压字、可见文案、发布提醒、产品复盘和交接记录。
 
+v0.16 起，品牌系统的验证从下面四步开始（在仓库根目录跑）：
+
+```bash
+# 1) 文档层：旧品牌 / 物流词在文档与引用里应零命中（HANDOFF 历史记录与 DESIGN.md 决策日志除外）
+grep -rn "美西\|杨美西\|Meixi\|meixipro\|封箱\|waybill\|集运" SKILL.md CLAUDE.md AGENT.md README.md README.en.md references/
+
+# 2) 小红书书页模板：渲染全部 .card + R1–R12 校验
+node local-tests/rebrand-xhs/render.cjs
+node validate-social-deck.mjs local-tests/rebrand-xhs
+
+# 3) 公众号图片消息模板：渲染 W01 + P01–P08，肉眼确认 W01 标题 / 英文行 / 册号全在 y 490–950 内
+node local-tests/rebrand-wechat/render.cjs
+
+# 4) 文档约束测试
+npm run test:docs
+```
+
+视觉验收底线：封面缩到 360px 仍能认出「蓝块 + 三行宋体 + 荧光条 + 折角」；封面 / 首图 0 logo；`P07` 记录字段留空、`.pending` 不预填。
+
 最快的验证路径，不要发明新需求。
 
 ```bash
@@ -451,6 +506,8 @@ Live Photo 页先当静态社交卡做：先确认第一帧、裁切、字体、
 - **图片来源签名机制是"用户决定"**。`SOURCES.md` 总会写，但是否在图上加标注由用户回答。这不是技术限制是产品决策（见 `PRODUCT.md`）。
 - **Live Photo 高光选择只是低成本诊断**。默认只做稀疏抽帧 / contact sheet / 时间段建议，不承诺精准识别转场、空镜、黑场或最佳高光。
 - **Live Photo 发布依赖手机端路径**。交付时必须提醒小红书 `5s`、微信公众号 `3s`，并提醒 `.pvt` AirDrop 到 iPhone 后从对应 App / 手机端编辑路径发布。
+- **品牌校验器只覆盖结构**。`validate-social-deck.mjs` 的 R12 只查封面装订装置（`.spine` / `.foot`）与旧 `.tally` 残留，不检查六个 OFL 字面的实际加载、折角位置或荧光条数量；英博伦品牌卡交付前仍要肉眼看 360px 缩略图与蓝区 / 折角。
+- **「翻到起毛边」的物证是排版纪律，不是装饰层**。折角、印章、荧光条、空记录行都是为了「这页被用过」；没有真实日期 / 真实完成状态时宁可不加，不要用装饰性折角或编造印章去补密度。
 
 ---
 
@@ -462,3 +519,6 @@ Live Photo 页先当静态社交卡做：先确认第一帧、裁切、字体、
 - 不要把 components.md 的硬上限表"调宽"以接更长的标题。先压文案。
 - 不要把内部制作词写到卡面上，例如 `三连拼图`、`5 秒看完`、`信息量`、`Live Photo`、`长视频处理`。这些词只能出现在计划、文件名、QA 或交付说明里。
 - 不要用自造背景色、线条、刻度、标签、徽章去"补排版"。先找既有模板和 reference；没有规则支持就不要加。
+- 不要在英博伦品牌卡上套 Editorial 主题或 Swiss accent，也不要混用圆体 / 卡通字体：品牌卡只有 `DESIGN.md` 的纸 / 墨 / 荧光笔三色材料与六个 OFL 字面。
+- 不要在封面 / 公众号首图加 logo、加价格或「点击购买」；不要用 AI 生成的儿童或图库假笑儿童照，真实照片只做「照片插页」。
+- 不要把已删除的旧物流卡系统（封箱 / 面单 / 算式 / 租户）从历史文档里恢复成模板或规则；历史只作为迁移记录保留。

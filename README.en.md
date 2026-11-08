@@ -12,14 +12,15 @@
 
 An agent skill for Claude Code, Codex, and similar coding-agent environments. It generates **Xiaohongshu / Rednote carousel images**, **Live Photo motion cards**, and **WeChat 21:9 + 1:1 cover pairs** from articles, copy, screenshots, product notes, subtitles, photos, or user-supplied videos.
 
-Two visual systems share one workflow:
+Three visual systems share one workflow:
 
 - **Editorial**. Restrained layouts in the spirit of *Monocle* / *Kinfolk* / *Cereal*. Best for storytelling, lifestyle, travel, reading, film, and personal observation.
 - **Swiss International**. Grid-first, single anchor color, sharp hairlines, extreme type contrast. Best for product reviews, data, frameworks, tutorials, and AI tools.
+- **英博伦 Embolen 「翻到起毛边」 brand cards**. Rice paper, two inks, and one highlighter: the English read-aloud habit rendered as a well-thumbed family handbook. One brand system with two platform shells — Xiaohongshu 3:4 and WeChat image messages.
 
 > Sister project to [guizang-ppt-skill](https://github.com/op7418/guizang-ppt-skill). Shared visual language, separate maintenance. PPT solves "horizontal swipe talks"; this one solves "static feed images."
 
-> This repository is a derivative of [op7418/guizang-social-card-skill](https://github.com/op7418/guizang-social-card-skill) (AGPL-3.0). It keeps that project's Editorial / Swiss systems and workflow, and adds the WeChat image-message (Greenbook) card system, the 杨美西转运 Rednote 「Taped Shut」 card system, and a 52-font registry of free-for-commercial-use Chinese display faces. Upstream attribution and licence are preserved as-is — see `LICENSE` and `AGENT.md`.
+> This repository is a derivative of [op7418/guizang-social-card-skill](https://github.com/op7418/guizang-social-card-skill) (AGPL-3.0). It keeps that project's Editorial / Swiss systems and workflow, and adds the 英博伦 Embolen 「翻到起毛边」 (well-thumbed family read-aloud handbook) card system — one brand system with two platform shells, Xiaohongshu 3:4 and WeChat image messages — plus a 52-font registry of free-for-commercial-use Chinese display faces. Upstream attribution and licence are preserved as-is — see `LICENSE` and `AGENT.md`.
 
 > Renamed from [szkkb/meixi-social-card-skill](https://github.com/szkkb/meixi-social-card-skill) in Nov 2026; still released under AGPL-3.0.
 
@@ -268,11 +269,14 @@ helen-social-card-skill/
 ├── README.en.md                          ← This file
 ├── HANDOFF.md                            ← Handoff doc: facts + version history
 ├── PRODUCT.md                            ← Product doc: thinking + decisions + roadmap
+├── DESIGN.md                             ← 英博伦 Embolen brand design source (paper / ink / highlighter + platform recipes)
 ├── validate-social-deck.mjs              ← Playwright layout validator
 ├── scripts/                              ← Live Photo packaging / contact sheet / doc-test scripts
 ├── assets/
 │   ├── template-editorial-card.html      ← Editorial seed (6 themes / 3 canvases)
 │   ├── template-swiss-card.html          ← Swiss seed (4 accents / 3 canvases)
+│   ├── template-xhs-card.html            ← 英博伦 Embolen Xiaohongshu seed (C01/C02 + P01–P08)
+│   ├── template-greenbook-card.html      ← 英博伦 Embolen WeChat image-message seed (W01 + P01–P08)
 │   ├── magazine-bg-webgl.js              ← WebGL ink-flow background
 │   └── screenshot-backgrounds/           ← 9 screenshot stage backgrounds (WebP)
 │       ├── style-a/                      ←   5 Editorial
@@ -281,6 +285,10 @@ helen-social-card-skill/
     ├── platform-specs.md                 ← Platform × resolution × naming
     ├── style-system.md                   ← Hard rules and anti-patterns for both styles
     ├── theme-presets.md                  ← All 10 palettes in detail
+    ├── greenbook-specs.md                ← WeChat image-message specs + W01 crop safe band
+    ├── brand-presets/embolen.md          ← 英博伦 brand preset (tokens / usage / content limits)
+    ├── font-library.md                   ← 52 free-for-commercial-use Chinese display faces (Editorial / Swiss)
+    ├── font-license-audit.md             ← Font licence audit record
     ├── layout-recipes.md                 ← 28 layout skeletons (M01-M16 + S01-S12)
     ├── components.md                     ← Type / cards / spacing / icons
     ├── background-systems.md             ← Ink flow / grid / paper layers

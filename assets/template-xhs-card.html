@@ -1,889 +1,711 @@
 <!doctype html>
-<html lang="zh-CN" data-brand="meixipro">
+<html lang="zh-CN" data-brand="embolen">
 <head>
 <meta charset="utf-8">
-<title>[必填] 替换为笔记短标题 · 杨美西转运小红书卡组</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<title>[必填] 替换为笔记短标题 · 英博伦 Embolen 小红书卡组</title>
+
+<!-- ============================================================================
+  英博伦 Embolen ·「翻到起毛边」小红书 3:4 卡种子模板
+  ----------------------------------------------------------------------------
+  设计真源：仓库根目录 DESIGN.md（改这个文件之前先读它）。
+  品牌：英博伦 Embolen，1–12 岁英语学习成长品牌，主张「温暖的陪伴孩子成长」。
+  不靠口号说出来，靠四个物证让人看到：折角 / 页码 / 手写日期 / 荧光条。
+
+  板型：1080×1440（3:4），sRGB PNG，唯一板型。
+  内容区：x 136–1000（864px 宽）；书脊 56px 通栏；页脚线 y 1288。
+
+  四个装订装置（固定复用，缺一就不像书）：
+    .spine   56px 通栏鲸鱼蓝书脊，底部竖排 Literata 页码
+    .foot    页脚行：1px 线 + 左品牌行 + 右 Literata 页码，margin-top:auto 流式承载
+    .hl      错位荧光条（每个字母/词组最多 2 处，只压 --ink 文字）
+    .dogear  折角（只在 C01 / C02 / P08，88–132px，露出 --paper-deep 背面）
+
+  十个配方骨架（本模板演示 10 张；实际一套 6–9 页，页码按套内重排）：
+    C01 书封封面（默认）        C02 照片插页封面（有真实照片时二选一）
+    P01 一句   P02 双声部   P03 步骤   P04 对照
+    P05 词句   P06 清单     P07 记录   P08 收束
+
+  ----------------------------------------------------------------------------
+  字体：全部 OFL 1.1 —— 法务只审一份协议，成品商用 / 嵌入 / 印刷无须逐次确认，也无须署名。
+    Noto Serif SC 900        中文 display       Google Fonts · OFL
+    Noto Sans SC 400/500     中文正文           Google Fonts · OFL
+    Yozai 悠哉 400           手写批注           github.com/lxgw/yozai-font · OFL
+                                                （cn-fonts CDN：@chinese-fonts/yozai）
+    Literata 500–900         书籍拉丁（书名行 / 册号 / 页码；不进教学内容）Google Fonts · OFL
+    Andika 400/700           教学英文（单词 / 句型；SIL 识字设计）Google Fonts · SIL OFL
+    Charis SIL 400           音标（只在家长注释里出现）Google Fonts · SIL OFL
+
+  花体防糊：Yozai 只有 400 单一字重。任何 <h*> / <strong> 上必须写死
+    font-weight: 400; font-synthesis: none;（本模板 .hand 已写死，禁止继承 h* 的 700）。
+  缺字检查：node scripts/check-font-coverage.mjs <task-dir>
+  导出：Playwright deviceScaleFactor: 2 截图 → `sips -z 1440 1080` 缩回 1080（超采样 Lanczos）。
+    见 local-tests/rebrand-xhs/render.cjs（逐张 .card 渲染 + 自检 + 360px 缩略检查）。
+
+  空状态（这套系统最容易翻车的地方）：
+    · 没有真实照片 → 删掉 C02 的 .photo-insert 整块，不留占位框；或直接改用 C01。
+    · 数字 / 日期未确认 → .pending 虚线待补框，不预填、不编造。
+    · 印章只盖真实日期 / 真实完成状态；未确认就保持空白印章轮廓（P07 已示范）。
+    · 标题超限（>3 行 或 每行 >9 字）→ 先改文案；改不到就换配方，绝不缩字到 <92px。
+    · 描红格每张词句卡最多 1 排（5–8 格）；照片插页只接受真实、已授权的家庭 / 孩子照片。
+    · 没有「两个人」的现场就不开 P02；没有真实日期就不盖章。
+
+  禁止：封箱 / 面单 / 仓库 / 胶带 / waybill / tally 等旧物流语义；AI 儿童与满版人像；
+    圆体卡通字、渐变、彩色椭圆底、卡片浮起阴影、毛玻璃、发光、做旧滤镜；
+    #4793D0 当小字色；荧光黄当字色；封面出现 logo / 价格 / 购买引导。
+  本模板 CSS 与 HTML 里的示例文案都是演示占位，出片前必须换成运营确认的真实文案。
+============================================================================ -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
-<!-- 花体字库 · 仓耳周珂正大榜书（胶带标题，固定）/ 千图笔锋手写体（仅纸面局部签注）
-     授权：references/font-license-audit.md #1 / #33，官方免费商用，成品无需署名。
-     缺字检查：node scripts/check-font-coverage.mjs <task-dir>
-     离线沙箱兜底：node scripts/build-font-links.mjs fetch <task-dir>/fonts chill-bangshu qiantu-bifeng -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@chinese-fonts/cezkzdbs@3.0.0/dist/仓耳周珂正大榜书/result.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@chinese-fonts/qtbfsxt@3.0.0/dist/千图笔锋手写体/result.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,200..900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Charis+SIL&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@chinese-fonts/yozai@3.0.0/dist/Yozai-Regular/result.css">
+
 <style>
-/* =========================================================
-   小红书 — 「封箱」Taped Shut 种子模板（v2 防呆流式多配方版）
-   ---------------------------------------------------------
-   板型：.card 1080×1440（3:4），唯一板型
-   设计真源：DESIGN-xhs.md（改这里之前先读它）
+/* =============================================================================
+   0. 品牌 token（与 DESIGN.md 的 colors / typography / components 一一对应）
+   颜色不是配色方案，是印刷工艺：纸 / 墨 / 荧光笔，每种颜色只有一个材料角色。
+   ========================================================================== */
+:root{
+  /* 纸 */
+  --paper:#FAF6EC;      /* 米纸 · 整卡底 */
+  --paper-soft:#F2EADB; /* 次级纸面 · 表头 */
+  --paper-deep:#EDE3D0; /* 折角背面 / 纸影 */
 
-   五大标准配方（按题型组合选用，默认全部无「正」字）：
-     X01 真仓大片（默认封面） · 满版实拍 + 蓝胶带 + 底部留边悬浮回执卡
-     X02 骑缝封箱（零遮挡页） · 上半实拍无遮挡 + 中腰骑缝胶带 + 条件→行动对照
-     X03 国际提单（参数看板） · 提单抬头 + 实拍窗 + Martian Mono 硬指标 + 三栏横评
-     X04 实物批注（细节圈认） · 上实拍红圈指认 + 下齿孔面单（看哪里 / 怎么做）
-     X05 核对清单（末页收藏） · 胶带标题 + 齿孔面单勾选清单 + 收藏引导签
+  /* 墨：蓝墨 / 粉墨 / 绿墨 */
+  --ink:#193B6F;        /* 10.26:1 · 标题与正文 */
+  --muted:#55677C;      /* 5.38:1 · 页码 / 元信息 */
+  --brand-ink:#2C6390;  /* 5.91:1 · 品牌蓝的小字替身 */
+  --accent-pink:#A33C64;/* 5.74:1 · 印章 / 小字粉墨 */
+  --accent-green:#4E6A2B;/* 5.69:1 · 完成态 / 小字绿墨 */
 
-   严禁反模式：
-     1. 禁止把封面做成「上半照片 + 下半满宽贴边死白底列表块」（SaaS/PPT 割裂感）。
-     2. 禁止默认渲染「正」字（.tally 仅在用户明确点名写“数坑帖”时从文末注释块启用）。
-     3. 禁止让 .tape-title / .hand 继承 700 粗体（伪粗体会导致花体字笔画糊成白团）。
-     4. 推荐以 Playwright deviceScaleFactor: 2 渲染（必要时 sips -z 1440 1080 超采样回缩）。
-   ========================================================= */
+  /* 面积色：只做块，不做字 */
+  --sea:#4793D0;        /* 鲸鱼蓝 · 面积 / 1px 线 / ≥64px 大字 */
+  --sky:#9AC9ED;        /* 浅腹蓝 · 只做底 / 描红格 */
+  --sun:#ECB957;        /* 荧光笔 · 只做底，上面永远压 --ink */
+  --pink:#DA6997;       /* 泡泡粉 · 只做块 */
+  --sprout:#87AC52;     /* 新芽绿 · 只做块 */
 
-/* ---------- 1. 租户品牌预设 ---------- */
-:root,
-[data-brand="meixipro"] {
-  --tape: #0060C9;                 /* config/tenants/meixipro.json brand.primaryColor */
-  --brand-name: "杨美西转运";
-}
-
-/* ---------- 2. 跨租户恒定层 ---------- */
-:root {
-  --tape-ink: #FFFFFF;             /* 5.98:1 on --tape */
-  --marker: #D0433B;               /* 4.44:1 on paper：仅 ≥24px 圈注 / 勾号 / 大字 */
-  --paper: #FFFAF1;
-  --paper-soft: #F4ECDE;
-  --paper-rule: #E2D8C7;
-  --ink: #1A1D26;                  /* 14.1:1 on paper */
-  --manifest-ink: #102546;
-  --warm: #7C5922;                 /* 6.05:1 on paper */
-  --pencil: #BDB6A8;               /* 可选「正」字未走到的笔画，非文字 */
-  --kraft: #B98E5E;
-  --kraft-light: #C29769;
-  --kraft-deep: #A67C4E;
-  --edge-blue: #2E5FA3;            /* 仅 .airmail */
-
-  --f-tape: "TsangerZhoukeZhengdabangshu", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
-  --f-hand: "qiantubifengshouxieti", "Noto Sans SC", "PingFang SC", sans-serif;
-  --f-body: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-  --f-mono: "Martian Mono", "SF Mono", "Menlo", "Noto Sans SC", monospace;
+  /* 六个 OFL 字面 */
+  --f-serif:"Noto Serif SC","Songti SC",serif;
+  --f-body:"Noto Sans SC","PingFang SC",sans-serif;
+  --f-hand:"Yozai","Noto Sans SC",cursive;
+  --f-book:"Literata",Georgia,serif;
+  --f-read:"Andika","Noto Sans SC",serif;
+  --f-ipa:"Charis SIL",Georgia,serif;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-figure { margin: 0; }
-h1, h2, h3, h4, strong, b { font-synthesis: none; }
-body {
-  background: #E9E3D8;
-  font-family: var(--f-body);
-  color: var(--ink);
-  -webkit-font-smoothing: antialiased;
-}
-.deck {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 48px;
-  padding: 48px 0;
+/* =============================================================================
+   1. 基础
+   ========================================================================== */
+*{box-sizing:border-box;margin:0;padding:0}
+figure{margin:0}
+html,body{background:#DDD4C4}
+body{font-family:var(--f-body);color:var(--ink);-webkit-font-smoothing:antialiased}
+.card *{font-synthesis:none}
+
+.deck{display:flex;flex-direction:column;align-items:center;gap:88px;padding:64px 0}
+.cap{font-size:15px;letter-spacing:.06em;color:#7A6A54;margin:0 0 -56px;font-family:var(--f-body)}
+
+/* 唯一板型：3:4。padding 左 136 是内容区，右 80 是页边，下 107 让 .foot 的
+   1px 页脚线恰好落 y 1288（107 + 45 = 1440 − 1288）。 */
+.card{
+  width:1080px;height:1440px;position:relative;overflow:hidden;isolation:isolate;
+  background:var(--paper);color:var(--ink);
+  display:flex;flex-direction:column;
+  padding:0 80px 107px 136px;
 }
 
-/* ---------- 3. 卡基础与空状态 ---------- */
-.card {
-  width: 1080px;
-  height: 1440px;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  background: var(--paper);
-  display: flex;
-  flex-direction: column;
-}
-.card.kraft,
-.photo-well {
-  background:
-    repeating-linear-gradient(90deg, rgba(0,0,0,.035) 0 2px, transparent 2px 14px),
-    linear-gradient(170deg, var(--kraft-light), var(--kraft) 55%, var(--kraft-deep));
-}
-.photo-well {
-  position: relative;
-  overflow: hidden;
-  outline: 3px dashed rgba(255,250,241,.55);
-  outline-offset: -32px;
-}
-.photo-well.full-bleed {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-.photo-well:has(.photo) { outline: none; }
-.photo-well .photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 45%;
-}
-.well-note {
-  position: absolute;
-  z-index: 2;
-  left: 64px;
-  top: 52%;
-  max-width: 660px;
-  font-family: var(--f-mono);
-  font-size: 20px;
-  letter-spacing: .06em;
-  line-height: 1.55;
-  color: rgba(255,250,241,.92);
-}
-.photo-well:has(.photo) .well-note { display: none; }
-.bg-vignette {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    rgba(16, 24, 36, 0.14) 0%,
-    rgba(16, 24, 36, 0) 24%,
-    rgba(16, 24, 36, 0) 62%,
-    rgba(16, 24, 36, 0.44) 100%
-  );
+/* =============================================================================
+   2. 装订装置（每张卡都必须齐）
+   ========================================================================== */
+/* 书脊：56px 通栏鲸鱼蓝，底部竖排 Literata 页码 */
+.spine{position:absolute;left:0;top:0;bottom:0;width:56px;background:var(--sea);z-index:5}
+.spine .spg{
+  position:absolute;left:0;right:0;bottom:40px;text-align:center;
+  writing-mode:vertical-rl;transform:rotate(180deg);
+  color:var(--paper);font-family:var(--f-book);font-size:22px;font-weight:500;letter-spacing:.14em;
 }
 
-/* ---------- 4. 胶带（背景锯齿在 ::before，文字保持纯净矢量防糊） ---------- */
-.tape {
-  position: relative;
-  z-index: 4;
-  color: var(--tape-ink);
-  filter: drop-shadow(0 12px 22px rgba(0,0,0,.25));
-  backface-visibility: hidden;
+/* 页眉元信息行 y 86 */
+.phead{
+  position:absolute;left:136px;right:80px;top:84px;z-index:4;
+  display:flex;justify-content:space-between;align-items:baseline;
 }
-.tape::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--tape);
-  clip-path: polygon(
-    24px 0, 100% 0, 100% 100%, 24px 100%,
-    0 90%, 20px 80%, 2px 70%, 22px 60%,
-    0 50%, 20px 40%, 2px 30%, 22px 20%, 0 10%
-  );
-}
-.tape.both::before {
-  clip-path: polygon(
-    22px 0, calc(100% - 22px) 0, 100% 14%, calc(100% - 18px) 28%,
-    100% 42%, calc(100% - 22px) 56%, 100% 70%, calc(100% - 18px) 85%,
-    calc(100% - 22px) 100%, 22px 100%, 0 86%, 18px 72%,
-    2px 58%, 22px 44%, 0 30%, 18px 16%
-  );
-}
-.tape-print {
-  position: absolute;
-  left: 44px;
-  right: 36px;
-  font-family: var(--f-mono);
-  font-weight: 500;
-  font-size: 17px;
-  letter-spacing: .2em;
-  white-space: nowrap;
-  overflow: hidden;
-  opacity: .68;
-}
-.tape-print.t { top: 14px; }
-.tape-print.b { bottom: 14px; }
-.tape-title {
-  font-family: var(--f-tape);
-  font-weight: 400 !important;
-  font-synthesis: none;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: geometricPrecision;
-  line-height: 1.08;
-  letter-spacing: .02em;
-}
-.tape-title[data-len="long"] { font-size: 86px !important; }
-.tape-no {
-  font-family: var(--f-mono);
-  font-weight: 700;
-  font-size: 28px;
-  letter-spacing: .06em;
-  opacity: .92;
+.phead .k{font-size:19px;font-weight:700;letter-spacing:.24em;color:var(--muted)}
+.phead .m{font-family:var(--f-book);font-size:19px;letter-spacing:.1em;color:var(--muted)}
+
+/* 页脚：流式 margin-top:auto（禁止 position:absolute 压实）→ 页脚线 y 1288，
+   线上 1px rgba(25,59,111,.24)，线下左品牌行 19px、右页码 Literata 28px。 */
+.foot{position:relative;z-index:4;width:100%;margin-top:auto}
+.foot .rule{height:1px;background:rgba(25,59,111,.24);margin-bottom:16px}
+.foot .row{display:flex;justify-content:space-between;align-items:baseline}
+.foot .l{font-size:19px;line-height:1.2;letter-spacing:.14em;font-weight:500;color:var(--muted)}
+.foot .r{font-family:var(--f-book);font-size:28px;line-height:1;font-weight:500;letter-spacing:.06em;color:var(--ink)}
+
+/* 错位荧光条：半高色块，左 −6px、右 −16px、下 0.04em、旋 −0.4°；文字在上。
+   硬约束：每张卡最多 2 处；只压 --ink 文字，不压 --brand-ink / --muted。 */
+.hl{position:relative;display:inline-block;isolation:isolate}
+.hl::before{
+  content:"";position:absolute;left:-6px;right:-16px;bottom:.04em;height:.50em;
+  background:var(--sun);transform:rotate(-.4deg);z-index:-1;
 }
 
-/* ---------- 5. 品牌抬头签与悬浮回执卡（X01 默认封面核心组件） ---------- */
-.brand-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  background: var(--paper);
-  padding: 14px 24px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.22);
+/* 手写批注：Yozai 单字重 400，写死 font-synthesis:none 防伪粗体糊字 */
+.hand{font-family:var(--f-hand);font-weight:400;font-synthesis:none;letter-spacing:.02em}
+
+/* 折角：132px，露出 --paper-deep 背面 + 1px 折痕；不加投影光晕、不做旧。
+   只在 C01 / C02 / P08。 */
+.dogear{
+  position:absolute;right:0;top:0;width:132px;height:132px;z-index:6;overflow:hidden;
+  background:linear-gradient(225deg,var(--paper-deep) 0 49.6%,var(--paper) 49.6%);
 }
-.brand-pill .dot {
-  width: 12px;
-  height: 12px;
-  background: var(--tape);
-  flex: none;
-}
-.brand-pill .name {
-  font-size: 27px;
-  font-weight: 900;
-  letter-spacing: .06em;
-  color: var(--ink);
-}
-.brand-pill .route {
-  font-family: var(--f-mono);
-  font-size: 20px;
-  font-weight: 500;
-  color: var(--warm);
-  letter-spacing: .08em;
+.dogear::after{
+  content:"";position:absolute;left:0;top:0;width:187px;height:1px;
+  background:rgba(25,59,111,.22);transform:rotate(45deg);transform-origin:0 0;
 }
 
-.cover-shell {
-  position: relative;
-  z-index: 4;
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 52px 52px 56px;
+/* 蓝区：封面专用，只放品牌行 / 英文书名行 / 册号 / 一句 ≤12 字短标题 */
+.bluefield{position:absolute;left:0;right:0;top:0;height:560px;background:var(--sea);z-index:1}
+
+/* =============================================================================
+   3. 可选组件（默认不渲染；复制时连注释一起看）
+   ========================================================================== */
+/* .stamp 印章：160px 圆形、3px 虚线 --accent-pink、旋 −7°。
+   只盖真实日期 / 真实完成状态，不编造。P07 里演示的是「空白印章轮廓」。 */
+.stamp{
+  width:160px;height:160px;border:3px dashed var(--accent-pink);border-radius:9999px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  transform:rotate(-7deg);text-align:center;color:var(--accent-pink);
+  background:rgba(250,246,236,.66);
 }
-.hero-tape {
-  position: absolute;
-  z-index: 4;
-  left: 28px;
-  top: 158px;
-  width: 1090px;
-  padding: 46px 88px 46px 80px;
-  transform: rotate(-5.2deg);
-  transform-origin: 0 50%;
-}
-.hero-tape .tape-title {
-  font-size: 102px;
+.stamp .sk{font-size:14px;font-weight:700;letter-spacing:.22em}
+.stamp .sv{font-family:var(--f-book);font-weight:600;font-size:30px;line-height:1.1}
+.stamp .ss{font-size:13px;font-weight:500;letter-spacing:.1em}
+
+/* .pending 空状态：数字 / 日期未确认时用虚线待补框，不预填示例数据。
+   用法：<span class="pending">免费仓储 __ 天 · 待确认</span>（字体 ≥18px） */
+.pending{
+  display:inline-block;padding:2px 10px;border:1px dashed var(--muted);border-radius:0;
+  font-size:22px;line-height:1.5;color:var(--muted);
 }
 
-.floating-slip {
-  position: relative;
-  z-index: 5;
-  background: var(--paper);
-  border-left: 12px solid var(--tape);
-  padding: 34px 40px 32px;
-  box-shadow: 0 16px 36px rgba(0,0,0,.30);
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
+/* .photo-insert 照片插页：白色 16px 边框、旋 −1.8°、偏移实影。
+   只接受真实、已授权的家庭 / 孩子照片；不 AI、不摆拍图库。
+   没有照片时整块删除，不留占位框（.photo-empty 是骨架演示，出图前必须替换或删除）。 */
+.photo-insert{
+  position:absolute;border:16px solid #fff;background:var(--paper-soft);
+  transform:rotate(-1.8deg);box-shadow:0 18px 38px rgba(25,59,111,.18);z-index:3;
 }
-/* 若封面右侧放 person.png 模切贴纸，给 .floating-slip 加 .with-person 即可自动让位 */
-.floating-slip.with-person {
-  max-width: 650px;
+.photo-insert img{display:block;width:100%;height:100%;object-fit:cover}
+.photo-empty{
+  width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  border:1px dashed var(--sky);background:var(--paper-soft);
 }
-.slip-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-}
-.slip-title {
-  font-size: 36px;
-  font-weight: 900;
-  line-height: 1.34;
-  color: var(--ink);
-}
-.slip-tag {
-  flex: none;
-  font-family: var(--f-mono);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--tape);
-  letter-spacing: .08em;
-}
-.slip-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  padding-top: 20px;
-  border-top: 2px solid var(--paper-rule);
-}
-.floating-slip.with-person .slip-grid {
-  grid-template-columns: 1fr;
-  gap: 14px;
-}
-.slip-item {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.slip-item .idx {
-  font-family: var(--f-mono);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--warm);
-}
-.slip-item .main {
-  font-size: 30px;
-  font-weight: 900;
-  color: var(--ink);
-}
-.slip-item .sub {
-  font-size: 24px;
-  font-weight: 500;
-  color: var(--warm);
-  line-height: 1.35;
+.photo-empty .pe-k{font-family:var(--f-hand);font-weight:400;font-size:34px;color:var(--muted)}
+.photo-empty .pe-s{font-size:22px;letter-spacing:.04em;color:var(--muted)}
+
+/* .trace-cell 描红格：74×88px 虚线 --sky，字母 --sky，供孩子描；每卡最多 1 排 */
+.trace{position:absolute;left:136px;z-index:3;display:flex;align-items:center;gap:14px}
+.trace .tk{font-size:19px;font-weight:700;letter-spacing:.2em;color:var(--muted);margin-right:12px}
+.trace i{
+  width:74px;height:88px;border:2px dashed var(--sky);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-read);font-weight:700;font-size:44px;color:var(--sky);font-style:normal;
 }
 
-/* ---------- 6. X02 骑缝封箱（照片零遮挡 + 条件→行动双列对照） ---------- */
-.seam-photo-stage {
-  height: 676px;
-  flex: none;
+/* =============================================================================
+   4. C01 · 书封封面（默认封面）
+   封面只数得出四个形状：蓝块、三行宋体、一条荧光黄、一个折角。
+   封面 0 logo；品牌只在书脊、页脚与收束页出现。
+   ========================================================================== */
+.c01 .imprint{position:absolute;left:136px;top:84px;z-index:3;font-size:21px;font-weight:700;letter-spacing:.24em;color:#fff}
+.c01 .entitle{
+  position:absolute;left:136px;top:264px;z-index:3;
+  font-family:var(--f-book);font-weight:600;font-size:60px;line-height:1.14;letter-spacing:.01em;color:#fff;
 }
-.corner-manifest {
-  position: absolute;
-  z-index: 3;
-  top: 44px;
-  left: 56px;
-  background: var(--paper);
-  border-left: 8px solid var(--tape);
-  padding: 14px 24px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.20);
-  display: flex;
-  align-items: center;
-  gap: 18px;
+.c01 .enote{position:absolute;left:136px;top:436px;z-index:3;font-size:23px;font-weight:500;letter-spacing:.06em;color:rgba(255,255,255,.92)}
+.c01 .vol{position:absolute;right:80px;top:506px;z-index:3;font-family:var(--f-book);font-weight:500;font-size:21px;letter-spacing:.16em;color:rgba(255,255,255,.9)}
+/* 标题区 y 648–1090：中文三行宋体 124px/1.12，≤3 行、每行 ≤9 字 */
+.c01 .title{
+  position:absolute;left:136px;top:648px;z-index:3;
+  font-family:var(--f-serif);font-weight:900;font-size:124px;line-height:1.12;letter-spacing:.01em;color:var(--ink);
 }
-.corner-manifest .brand { font-size: 26px; font-weight: 900; letter-spacing: .06em; }
-.corner-manifest .sep { width: 1.5px; height: 22px; background: var(--paper-rule); }
-.corner-manifest .meta { font-family: var(--f-mono); font-size: 20px; font-weight: 500; letter-spacing: .08em; color: var(--warm); }
+/* 正文区 y 1120–1200：一句「今晚能做的一件事」38px */
+.c01 .oneline{position:absolute;left:136px;right:220px;top:1116px;z-index:3;font-size:38px;line-height:1.55;font-weight:500;color:var(--ink)}
+.c01 .date{position:absolute;right:80px;top:1232px;z-index:3;font-size:30px;line-height:1.2;color:var(--muted)}
 
-.seam-tape-wrap {
-  position: relative;
-  z-index: 6;
-  width: 1080px;
-  overflow: hidden;
-  margin-top: -126px;
-  margin-bottom: -10px;
-  padding: 18px 0 26px 26px;
+/* =============================================================================
+   5. C02 · 照片插页封面（有真实照片时二选一，仍保留蓝区 / 折角 / 页脚）
+   照片「贴在书页上」（白框、微旋、实影），不做满版人像封面。
+   ========================================================================== */
+.c02 .imprint{position:absolute;left:136px;top:84px;z-index:3;font-size:21px;font-weight:700;letter-spacing:.24em;color:#fff}
+.c02 .entitle{
+  position:absolute;left:136px;top:168px;z-index:3;
+  font-family:var(--f-book);font-weight:600;font-size:52px;line-height:1.2;letter-spacing:.01em;color:#fff;
 }
-.seam-tape {
-  width: 1070px;
-  padding: 38px 76px 38px 72px;
-  transform: rotate(-2.4deg);
+.c02 .enote{position:absolute;left:136px;top:304px;z-index:3;font-size:21px;font-weight:500;letter-spacing:.05em;color:rgba(255,255,255,.92)}
+.c02 .vol{position:absolute;right:80px;top:342px;z-index:3;font-family:var(--f-book);font-weight:500;font-size:19px;letter-spacing:.16em;color:rgba(255,255,255,.9)}
+.c02 .title{
+  position:absolute;left:136px;top:424px;z-index:3;
+  font-family:var(--f-serif);font-weight:900;font-size:92px;line-height:1.14;letter-spacing:.01em;color:var(--ink);
 }
-.seam-tape .tape-title { font-size: 92px; margin: 10px 0; }
-.seam-tape .seam-note {
-  font-family: var(--f-mono);
-  font-size: 16px;
-  letter-spacing: .2em;
-  opacity: .72;
-  white-space: nowrap;
-  overflow: hidden;
-}
+.c02 .body{position:absolute;left:136px;top:664px;width:380px;z-index:3;font-size:38px;line-height:1.6;font-weight:500;color:var(--ink)}
+.c02 .note{position:absolute;left:136px;top:872px;width:380px;z-index:3;font-size:34px;line-height:1.6;color:var(--ink)}
+.c02 .date{position:absolute;left:136px;top:1030px;z-index:3;font-size:28px;line-height:1.3;color:var(--muted)}
+.c02 .photo-insert{left:548px;top:660px;width:440px;height:520px}
 
-.decision-body {
-  flex: 1 1 auto;
-  background: var(--paper);
-  padding: 22px 64px 44px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+/* =============================================================================
+   6. P01 · 一句（观点 / 转折 / 金句）
+   宋体 96px 主句（≤4 行）压荧光条；页边一条 Yozai 批注；允许 ≥1/3 留白。
+   ========================================================================== */
+.p01 .quote{
+  position:absolute;left:136px;right:120px;top:352px;z-index:3;
+  font-family:var(--f-serif);font-weight:900;font-size:96px;line-height:1.3;letter-spacing:.01em;color:var(--ink);
 }
-.kicker-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--ink);
-}
-.kicker-line .kicker-zh { font-size: 30px; font-weight: 700; color: var(--warm); letter-spacing: .04em; }
-.kicker-line .kicker-en { font-family: var(--f-mono); font-size: 20px; color: var(--warm); letter-spacing: .14em; }
-.matrix-rows { display: flex; flex-direction: column; gap: 16px; }
-.matrix-row {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  align-items: center;
-  gap: 24px;
-  background: var(--paper-soft);
-  border-left: 6px solid var(--ink);
-  padding: 20px 26px;
-}
-.matrix-row.primary { border-left-color: var(--tape); }
-.cond-pill { font-size: 28px; font-weight: 700; color: var(--warm); line-height: 1.3; }
-.act-main { font-size: 34px; font-weight: 900; color: var(--ink); line-height: 1.3; }
-.act-main .hl { color: var(--tape); }
-.foot-note {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: var(--f-mono);
-  font-size: 20px;
-  color: var(--warm);
-  letter-spacing: .06em;
-  padding-top: 10px;
+/* 页边批注：竖排 Yozai，单条 ≤12 字，落在右侧页边（x 1004–1040），不压正文 */
+.p01 .margin{
+  position:absolute;right:40px;top:300px;z-index:3;width:36px;
+  writing-mode:vertical-rl;font-size:30px;line-height:1.6;color:var(--muted);
 }
 
-/* ---------- 7. X03 国际提单看板（计费公式 / 时效 / 参数横评） ---------- */
-.card.manifest {
-  padding: 56px 64px;
-  gap: 30px;
-  background: var(--paper);
-}
-.manifest-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  padding-top: 8px;
-  padding-bottom: 20px;
-  border-bottom: 3px solid var(--manifest-ink);
-}
-.manifest-brand .zh { font-size: 34px; font-weight: 900; color: var(--manifest-ink); letter-spacing: .06em; }
-.manifest-brand .sub { font-family: var(--f-mono); font-size: 20px; color: var(--warm); letter-spacing: .12em; margin-top: 4px; }
-.manifest-code { text-align: right; font-family: var(--f-mono); font-size: 20px; color: var(--warm); letter-spacing: .1em; line-height: 1.45; }
-.tape-header {
-  padding: 40px 56px 40px 64px;
-  transform: rotate(-1.2deg);
-}
-.tape-header .tape-title { font-size: 90px; }
-.evidence-grid {
-  display: grid;
-  grid-template-columns: 460px 1fr;
-  gap: 28px;
-  flex: 1 1 auto;
-  min-height: 470px;
-}
-.photo-box {
-  position: relative;
-  border: 2.5px solid var(--manifest-ink);
-  overflow: hidden;
-}
-.photo-caption {
-  position: absolute;
-  z-index: 3;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(26,29,38,.86);
-  color: var(--paper);
-  padding: 12px 18px;
-  font-family: var(--f-mono);
-  font-size: 19px;
-  letter-spacing: .06em;
-}
-.spec-stack { display: flex; flex-direction: column; gap: 22px; }
-.spec-card {
-  flex: 1 1 0;
-  background: var(--paper-soft);
-  border-top: 4px solid var(--manifest-ink);
-  padding: 22px 28px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.spec-card.accent { border-top-color: var(--tape); }
-.spec-label { font-family: var(--f-mono); font-size: 20px; font-weight: 700; letter-spacing: .12em; color: var(--warm); }
-.spec-big { font-family: var(--f-mono); font-size: 60px; font-weight: 700; color: var(--manifest-ink); letter-spacing: -.03em; line-height: 1; }
-.spec-card.accent .spec-big { color: var(--tape); }
-.spec-desc { font-size: 28px; font-weight: 700; color: var(--ink); line-height: 1.38; }
+/* =============================================================================
+   7. P02 · 双声部（亲子共读现场）—— 全系统唯一的「两个人」
+   左右两栏 + 1px 中线：大人（Noto Sans SC 38px，短句、可执行）/ 孩子（Andika 56px + Yozai 原话）。
+   ========================================================================== */
+.p02 .divider{position:absolute;left:552px;top:380px;height:740px;width:1px;background:rgba(25,59,111,.18);z-index:2}
+.p02 .col{position:absolute;top:380px;z-index:3}
+.p02 .col.l{left:136px;width:396px}
+.p02 .col.r{left:616px;width:384px}
+.p02 .k{font-size:20px;font-weight:700;letter-spacing:.2em;color:var(--muted);margin-bottom:26px}
+.p02 .col.l p{font-size:38px;line-height:1.74;font-weight:500;margin-bottom:16px;color:var(--ink)}
+.p02 .col.l p.last{color:var(--brand-ink)}
+.p02 .col.r .en{font-family:var(--f-read);font-weight:700;font-size:56px;line-height:1.15;color:var(--ink);margin-bottom:16px}
+.p02 .col.r .said{font-size:36px;line-height:1.6;color:var(--ink)}
+.p02 .col.r .note{font-size:30px;line-height:1.7;color:var(--muted);margin-top:22px}
+.p02 .bottomnote{position:absolute;left:136px;right:80px;top:1116px;z-index:3;font-size:33px;line-height:1.5;color:var(--ink)}
 
-.bottom-routes {
-  border-top: 2px solid var(--manifest-ink);
-  padding-top: 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-.routes-heading { display: flex; justify-content: space-between; align-items: baseline; }
-.routes-heading h2 { font-size: 32px; font-weight: 900; color: var(--manifest-ink); }
-.routes-heading span { font-family: var(--f-mono); font-size: 20px; color: var(--warm); }
-.route-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-.route-col {
-  border: 2px solid var(--paper-rule);
-  background: #FFFFFF;
-  padding: 18px 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.route-col.best { border-color: var(--tape); border-width: 2.5px; }
-.route-col .no { font-family: var(--f-mono); font-size: 20px; font-weight: 700; color: var(--warm); }
-.route-col.best .no { color: var(--tape); }
-.route-col .way { font-size: 30px; font-weight: 900; color: var(--manifest-ink); }
-.route-col .tip { font-size: 24px; font-weight: 500; color: var(--ink); line-height: 1.35; }
+/* =============================================================================
+   8. P03 · 步骤（方法 / 共读流程）
+   纵向 01–05 + 一条竖线；每步 ≤24 字；无 icon，无箭头装饰；侧边挂 1 条手写批注。
+   ========================================================================== */
+.p03 .vline{position:absolute;left:214px;top:430px;height:746px;width:1px;background:rgba(25,59,111,.18);z-index:2}
+.p03 .steps{position:absolute;left:136px;right:90px;top:396px;z-index:3}
+.p03 .step{display:flex;align-items:baseline;gap:46px;min-height:156px}
+.p03 .sn{flex:none;width:54px;font-family:var(--f-book);font-weight:600;font-size:46px;line-height:1;color:var(--brand-ink)}
+.p03 .st{font-size:40px;line-height:1.5;font-weight:500;color:var(--ink)}
+.p03 .handnote{position:absolute;right:90px;top:300px;width:230px;z-index:3;font-size:31px;line-height:1.6;color:var(--muted)}
 
-/* ---------- 8. 面单纸、贴纸、红圈、勾选框、待补位 ---------- */
-.label {
-  background: var(--paper);
-  color: var(--ink);
-  box-shadow: 0 10px 24px rgba(0,0,0,.20);
-}
-.label.perf {
-  box-shadow: none;
-  -webkit-mask: radial-gradient(circle 8px at 14px 0, transparent 97%, #000 100%) 0 0 / 28px 100% repeat-x;
-          mask: radial-gradient(circle 8px at 14px 0, transparent 97%, #000 100%) 0 0 / 28px 100% repeat-x;
-}
-.mono-label {
-  font-family: var(--f-mono);
-  font-weight: 500;
-  font-size: 22px;
-  letter-spacing: .14em;
-  color: var(--warm);
-}
-.why { font-size: 33px; font-weight: 500; line-height: 1.58; margin-top: 10px; }
-.act { font-size: 40px; font-weight: 900; line-height: 1.35; }
-.item { font-size: 34px; font-weight: 700; line-height: 1.38; }
+/* =============================================================================
+   9. P04 · 对照（路线 / 方法对比）
+   两栏表头色带（--paper-soft）+ 每栏 ≤3 行；只比 2 个对象；胜出项压荧光条；
+   不用对勾 / 叉号图标。
+   ========================================================================== */
+.p04 .cols{position:absolute;left:136px;right:80px;top:380px;z-index:3;display:flex;gap:24px}
+.p04 .col{flex:1 1 0;min-width:0}
+.p04 .ch{padding:20px 24px;background:var(--paper-soft);font-size:30px;font-weight:700;letter-spacing:.04em;color:var(--ink)}
+.p04 .cr{padding:24px 24px;font-size:34px;line-height:1.45;color:var(--ink);border-bottom:1px solid rgba(25,59,111,.22)}
+.p04 .why{position:absolute;left:136px;top:800px;z-index:3}
+.p04 .wk{font-size:20px;font-weight:700;letter-spacing:.2em;color:var(--muted);margin-bottom:18px}
+.p04 .wt{font-size:38px;line-height:1.55;font-weight:500;color:var(--ink)}
+.p04 .after{position:absolute;left:136px;top:1030px;z-index:3;font-size:34px;line-height:1.5;color:var(--ink)}
 
-.sticker {
-  position: absolute;
-  z-index: 6;
-  filter: url(#die-cut) drop-shadow(0 14px 22px rgba(0,0,0,.26));
+/* =============================================================================
+   10. P05 · 词句（每周一词 / 句型）
+   Andika 单词 226px + 音标（Charis SIL）+ 中文注 + 例句 Andika 52px + 描红格 + 一条家长提示。
+   硬约束：英文永远比中文大，单词字距 0。
+   ========================================================================== */
+.p05 .word{
+  position:absolute;left:130px;top:226px;z-index:3;
+  font-family:var(--f-read);font-weight:700;font-size:226px;line-height:.92;letter-spacing:0;color:var(--ink);
 }
-.sticker img { display: block; width: 100%; height: auto; }
+/* 荧光条压在目标字母组合上（拼读教学用），高度按大写字身收窄 */
+.p05 .word .hl::before{left:-4px;right:2px;bottom:.06em;height:.46em}
+.p05 .phon{position:absolute;left:136px;top:470px;z-index:3;display:flex;align-items:baseline;gap:26px}
+.p05 .ipa{font-family:var(--f-ipa);font-weight:400;font-size:44px;color:var(--muted)}
+.p05 .zh{font-family:var(--f-serif);font-weight:700;font-size:42px;color:var(--ink)}
+.p05 .example{position:absolute;left:136px;right:80px;top:560px;z-index:3}
+.p05 .example .en{font-family:var(--f-read);font-weight:400;font-size:52px;line-height:1.42;color:var(--ink);letter-spacing:0}
+.p05 .example .zh{font-size:29px;line-height:1.6;color:var(--muted);margin-top:8px}
+.p05 .trace{top:748px}
+.p05 .tip{position:absolute;left:136px;right:200px;top:940px;z-index:3}
+.p05 .tip .q{font-size:36px;line-height:1.55;color:var(--ink)}
+.p05 .tip .s{font-size:28px;line-height:1.6;color:var(--muted);margin-top:14px}
+.p05 .bottomnote{position:absolute;left:136px;right:120px;top:1140px;z-index:3;font-size:34px;line-height:1.5;color:var(--ink)}
 
-.hand {
-  font-family: var(--f-hand);
-  font-weight: 400 !important;
-  font-synthesis: none;
-  -webkit-font-smoothing: antialiased;
-  color: var(--marker);
-  line-height: 1.15;
+/* =============================================================================
+   11. P06 · 清单（今晚就能做 / 共读清单）
+   宋体标题 72px + 6 行（5–7 行）方格清单；留 2 个空行；页脚上方一行手写「做到 N 条就很好」。
+   ========================================================================== */
+.p06 .list{position:absolute;left:136px;right:120px;top:400px;z-index:3}
+.p06 .item{display:flex;align-items:center;gap:30px;min-height:104px}
+.p06 .box{flex:none;width:42px;height:42px;border:2px solid var(--ink);background:rgba(255,255,255,.4)}
+.p06 .t{font-size:37px;line-height:1.4;font-weight:500;color:var(--ink)}
+.p06 .t em{font-style:normal;font-family:var(--f-read);font-weight:700;color:var(--brand-ink)}
+.p06 .after{position:absolute;left:136px;right:80px;top:1090px;z-index:3;font-size:30px;line-height:1.5;color:var(--ink)}
+
+/* =============================================================================
+   12. P07 · 记录（学员成长 / 读书记录）
+   4 行记录表 + 印章（真实日期）；字段留空，不预填。记录行底部 1px 线。
+   ========================================================================== */
+.p07 .rows{position:absolute;left:136px;right:110px;top:400px;z-index:3}
+.p07 .record-row{
+  display:grid;grid-template-columns:230px 1fr;align-items:end;min-height:130px;
+  border-bottom:1px solid rgba(25,59,111,.22);padding:24px 0 20px;
 }
-.ring { position: absolute; z-index: 4; overflow: visible; pointer-events: none; }
-.ring path { fill: none; stroke-linecap: round; }
-.ring .under { stroke: #fff; stroke-width: 16; opacity: .92; }
-.ring .over  { stroke: var(--marker); stroke-width: 8; }
+.p07 .rl{font-size:24px;font-weight:700;letter-spacing:.1em;color:var(--muted)}
+.p07 .rv{min-height:52px;font-family:var(--f-hand);font-weight:400;font-size:42px;line-height:1.2;color:var(--ink)}
+.p07 .rv.en{font-family:var(--f-read);font-weight:400;font-size:40px}
+.p07 .stampwrap{position:absolute;right:110px;top:1000px;z-index:4}
+.p07 .stamp .sv{font-size:28px}
+.p07 .stamp .ss{font-size:12px;letter-spacing:.06em}
+.p07 .note{position:absolute;left:136px;top:1010px;z-index:3;font-size:32px;line-height:1.5;color:var(--ink)}
 
-.box {
-  flex: none;
-  position: relative;
-  width: 44px;
-  height: 44px;
-  margin-top: 4px;
-  border: 3.5px solid var(--ink);
-  transform: rotate(-2deg);
+/* =============================================================================
+   13. P08 · 收束（末页 / 下一册预告）
+   宋体 104px 两行 + 手写晚安句 + 96px 圆形 logo 出版者标记 + 下一册；唯一允许出现 logo 的内页。
+   ========================================================================== */
+.p08 .phead{right:200px}   /* 给右上折角让位 */
+.p08 .title{
+  position:absolute;left:136px;top:330px;width:800px;z-index:3;
+  font-family:var(--f-serif);font-weight:900;font-size:104px;line-height:1.24;letter-spacing:.01em;color:var(--ink);
 }
-.box svg { display: none; position: absolute; left: -6px; top: -18px; width: 64px; height: 64px; overflow: visible; }
-.box.on svg { display: block; }
-.box path { fill: none; stroke: var(--marker); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
-
-.pending {
-  display: inline-block;
-  font-family: var(--f-mono);
-  font-size: 20px;
-  letter-spacing: .04em;
-  line-height: 1.4;
-  color: var(--warm);
-  border: 2px dashed var(--warm);
-  padding: 4px 12px;
+.p08 .p08-hand{position:absolute;left:136px;top:640px;z-index:3;font-size:36px;line-height:1.5;color:var(--muted)}
+.p08 .p08-mark{position:absolute;left:136px;bottom:296px;z-index:3;display:flex;align-items:center;gap:26px}
+.p08 .mark-seal{
+  position:relative;flex:none;width:96px;height:96px;border-radius:9999px;overflow:hidden;background:#fff;
+  box-shadow:0 0 0 1px rgba(25,59,111,.10);
 }
-.checklist { list-style: none; display: grid; gap: 38px; }
-.checklist li { display: flex; gap: 22px; }
-.checklist .pending { margin-top: 10px; }
-
-/* 可选组件样式：仅当用户明确点名写“数坑帖”时配合末尾注释 HTML 启用 */
-.tally { display: block; overflow: visible; }
-.tally g { transform: rotate(-3deg); transform-origin: 50% 50%; }
-.tally path { fill: none; stroke: var(--pencil); stroke-width: 17; stroke-linecap: round; stroke-linejoin: round; }
-.tally[data-n="1"] path:nth-child(-n+1),
-.tally[data-n="2"] path:nth-child(-n+2),
-.tally[data-n="3"] path:nth-child(-n+3),
-.tally[data-n="4"] path:nth-child(-n+4),
-.tally[data-n="5"] path:nth-child(-n+5) { stroke: var(--marker); }
-
-.airmail {
-  position: absolute;
-  z-index: 9;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 12px;
-  background: repeating-linear-gradient(
-    -45deg,
-    var(--marker) 0 22px,
-    var(--paper) 22px 44px,
-    var(--edge-blue) 44px 66px,
-    var(--paper) 66px 88px
-  );
+.p08 .mark-seal .fallback{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-book);font-weight:600;font-size:30px;letter-spacing:.04em;color:var(--brand-ink);
 }
-.airmail.top { top: 0; bottom: auto; }
+.p08 .mark-seal img{position:relative;z-index:1;display:block;width:96px;height:96px;object-fit:cover}
+.p08 .p08-mark .mt b{display:block;font-family:var(--f-book);font-weight:600;font-size:26px;letter-spacing:.14em;color:var(--ink)}
+.p08 .p08-mark .mt span{display:block;margin-top:5px;font-size:19px;letter-spacing:.12em;color:var(--muted)}
+.p08 .p08-next{position:absolute;left:136px;bottom:186px;z-index:3;font-size:26px;line-height:1.5;letter-spacing:.06em;color:var(--muted)}
 </style>
 </head>
 <body>
-<!-- 模切白边滤镜（供可选出镜人 person.png 使用） -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <filter id="die-cut" x="-10%" y="-10%" width="120%" height="120%">
-    <feMorphology in="SourceAlpha" operator="dilate" radius="16" result="grow"/>
-    <feFlood flood-color="#FFFFFF"/>
-    <feComposite in2="grow" operator="in" result="edge"/>
-    <feMerge><feMergeNode in="edge"/><feMergeNode in="SourceGraphic"/></feMerge>
-  </filter>
-</svg>
-
 <main class="deck">
-<!-- POSTERS_HERE -->
 
-<!-- ===================== X01 · 默认封面（真仓大片 + 底部留边悬浮回执） ===================== -->
-<section class="card kraft" id="xhs-01" data-recipe="X01">
-  <div class="photo-well full-bleed">
-    <!-- <img class="photo" src="photo-cover.jpg" alt="" style="object-position:center 45%"> -->
-    <div class="well-note">[仓库实拍位 · 满版 3:4 · 放置 photo-cover.jpg 后自动隐藏本提示]</div>
+<!-- =========================================================================
+     C01 · 书封封面（默认封面）
+     骨架：蓝区 y0–560（品牌行 / Literata 英文书名行 / 册号）→ 三行宋体 124px
+     + 一条荧光条 → 一句「今晚能做的一件事」 → 页脚；右上折角。
+     硬约束：标题 ≤3 行 × 每行 ≤9 字；0 logo；0 AI 儿童。
+     裁切：小红书不可裁；公众号首图另走 W01 构图。
+     ========================================================================= -->
+<div class="cap">C01 · 书封封面（默认）· 蓝块 + 三行宋体 + 荧光条 + 折角</div>
+<section class="card c01" id="xhs-c01" data-recipe="C01">
+  <div class="bluefield"></div>
+  <div class="spine"><span class="spg">01</span></div>
+  <div class="imprint">EMBOLEN · 家庭共读手册</div>
+  <div class="entitle">READ ALOUD,<br>GROW SLOWLY</div>
+  <div class="enote">给 1–12 岁孩子的英语共读手册</div>
+  <div class="vol">VOL. 03 — 2026 SPRING</div>
+  <div class="dogear"></div>
+
+  <h1 class="title">他听不懂，<br>但他记得<br><span class="hl">你的声音</span>。</h1>
+  <div class="oneline">今晚能做的一件事：读一页，不翻译，<br>让他自己翻。</div>
+  <div class="date hand">第 14 天 · 3 月 9 日</div>
+
+  <div class="foot">
+    <div class="rule"></div>
+    <div class="row"><span class="l">英博伦 · 家庭共读手册</span><span class="r">01 / 10</span></div>
   </div>
-  <div class="bg-vignette"></div>
-
-  <div class="hero-tape tape">
-    <div class="tape-print t">杨美西转运 · 亲手打包 · LOS ANGELES · OCEAN FREIGHT</div>
-    <h1 class="tape-title">大件运洛杉矶<br>怎么最省钱</h1>
-    <div class="tape-print b">杨美西转运 · 亲手打包 · LOS ANGELES · OCEAN FREIGHT</div>
-  </div>
-
-  <div class="cover-shell">
-    <div>
-      <div class="brand-pill">
-        <span class="dot"></span>
-        <span class="name">杨美西转运</span>
-        <span class="route">国内仓 → 洛杉矶</span>
-      </div>
-    </div>
-
-    <div class="floating-slip">
-      <div class="slip-head">
-        <p class="slip-title">先看「最后怎么拿货」，再选渠道：</p>
-        <span class="slip-tag">3 STEPS</span>
-      </div>
-      <div class="slip-grid">
-        <div class="slip-item">
-          <span class="idx">01 · 最省钱</span>
-          <span class="main">海外仓自提</span>
-          <span class="sub">省掉末端派送费</span>
-        </div>
-        <div class="slip-item">
-          <span class="idx">02 · 满 100kg</span>
-          <span class="main">卡车派送</span>
-          <span class="sub">大件均摊送到门</span>
-        </div>
-        <div class="slip-item">
-          <span class="idx">03 · 小批大件</span>
-          <span class="main">海运拼邮</span>
-          <span class="sub">不便自提更省心</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 若有出镜人透明抠图 person.png：给上方 .floating-slip 加 class="floating-slip with-person"，并取消下行注释 -->
-  <!-- <div class="sticker" style="right:36px;bottom:12px;width:360px;transform:rotate(-2deg)"><img src="person.png" alt=""></div> -->
-  <div class="airmail"></div>
-</section>
-
-<!-- ===================== X02 · 骑缝拆解页（上半照片零遮挡 + 条件→行动双列对照） ===================== -->
-<section class="card" id="xhs-02" data-recipe="X02">
-  <div class="photo-well seam-photo-stage">
-    <!-- <img class="photo" src="photo-seam.jpg" alt="" style="object-position:center 38%"> -->
-    <div class="well-note" style="top:46%">[仓库实拍位 · 上半无胶带遮挡 · 适合立式大箱 / 箱唛 / 打木架细节]</div>
-    <div class="corner-manifest">
-      <span class="brand">杨美西转运</span>
-      <span class="sep"></span>
-      <span class="meta">CN → LAX · 大件海运</span>
-    </div>
-  </div>
-
-  <div class="seam-tape-wrap">
-    <div class="seam-tape tape both">
-      <div class="seam-note">杨美西转运 · 亲手打包 · LOS ANGELES · OCEAN FREIGHT</div>
-      <h2 class="tape-title">大件海运洛杉矶<br>怎么拿货最省钱</h2>
-      <div class="seam-note">先看外箱尺寸与末端拿货方式 · 别只比首重单价</div>
-    </div>
-  </div>
-
-  <div class="decision-body">
-    <div class="kicker-line">
-      <span class="kicker-zh">按「末端怎么拿货」排省钱顺序</span>
-      <span class="kicker-en">PICKUP &gt; TRUCK &gt; LCL</span>
-    </div>
-
-    <div class="matrix-rows">
-      <div class="matrix-row primary">
-        <div class="cond-pill">01 · 能去洛杉矶仓</div>
-        <div class="act-main"><span class="hl">优先海外仓自提</span>，省掉末端派送费</div>
-      </div>
-      <div class="matrix-row">
-        <div class="cond-pill">02 · 凑够 100 千克</div>
-        <div class="act-main">走卡车派送到门，大件均摊更划算</div>
-      </div>
-      <div class="matrix-row">
-        <div class="cond-pill">03 · 不足 100 千克</div>
-        <div class="act-main">不便自提就走拼邮，小批大箱不吃亏</div>
-      </div>
-    </div>
-
-    <div class="foot-note">
-      <span>仓库实拍 · 合箱前复核外箱三边尺寸</span>
-      <span>MEIXIPRO · LAX</span>
-    </div>
-  </div>
-
-  <div class="airmail"></div>
-</section>
-
-<!-- ===================== X03 · 国际提单看板页（计费公式 / 船期时效 / 横评干货专版） ===================== -->
-<section class="card manifest" id="xhs-03" data-recipe="X03">
-  <div class="airmail top"></div>
-
-  <header class="manifest-head">
-    <div class="manifest-brand">
-      <div class="zh">杨美西转运 · 大件海运</div>
-      <div class="sub">CHINA WAREHOUSE → LOS ANGELES</div>
-    </div>
-    <div class="manifest-code">
-      SHEET / 03<br>OCEAN GUIDE
-    </div>
-  </header>
-
-  <div class="tape-header tape both">
-    <div class="tape-print t">杨美西转运 · 大件海运 · LOS ANGELES · 亲手打包 · OCEAN FREIGHT</div>
-    <h2 class="tape-title">大件海运洛杉矶<br>怎么计费要多久</h2>
-    <div class="tape-print b">杨美西转运 · 大件海运 · LOS ANGELES · 亲手打包 · OCEAN FREIGHT</div>
-  </div>
-
-  <div class="evidence-grid">
-    <figure class="photo-box photo-well">
-      <!-- <img class="photo" src="photo-box-spec.jpg" alt="" style="object-position:center 42%"> -->
-      <div class="well-note" style="left:28px;right:28px;top:38%;font-size:18px">[实拍证据窗 · 量外箱尺寸或上秤照]</div>
-      <figcaption class="photo-caption">实拍：入仓先量外箱长×宽×高</figcaption>
-    </figure>
-
-    <div class="spec-stack">
-      <div class="spec-card accent">
-        <div class="spec-label">RULE 01 · 计费重量</div>
-        <div class="spec-big">L×W×H</div>
-        <div class="spec-desc">大件同时核实重与体积重，合箱前先看外箱尺寸</div>
-        <span class="pending">计泡系数 __ · 待运营确认</span>
-      </div>
-      <div class="spec-card">
-        <div class="spec-label">RULE 02 · 全程参考船期</div>
-        <div class="spec-big">LAX</div>
-        <div class="spec-desc">开船后提取与末端派送分段计算，旺季提前排仓</div>
-        <span class="pending">开船后 __–__ 工作日 · 待确认</span>
-      </div>
-    </div>
-  </div>
-
-  <section class="bottom-routes">
-    <div class="routes-heading">
-      <h2>3 种末端拿货方式 · 省钱优先级</h2>
-      <span>STEP BY STEP</span>
-    </div>
-    <div class="route-cols">
-      <div class="route-col best">
-        <span class="no">01 · 最省末端费</span>
-        <div class="way">海外仓自提</div>
-        <p class="tip">人在洛杉矶周边可自取，立省派送费</p>
-      </div>
-      <div class="route-col">
-        <span class="no">02 · 满 100 千克</span>
-        <div class="way">卡车派送</div>
-        <p class="tip">多件家具大货凑单，直送到家门口</p>
-      </div>
-      <div class="route-col">
-        <span class="no">03 · 不足 100 千克</span>
-        <div class="way">海运拼邮</div>
-        <p class="tip">不能自提的小批大件，省心清晰</p>
-      </div>
-    </div>
-  </section>
-
-  <div class="airmail"></div>
-</section>
-
-<!-- ===================== X04 · 实物批注页（现场细节红圈指认 + 齿孔面单动作指引） ===================== -->
-<section class="card" id="xhs-04" data-recipe="X04">
-  <div class="photo-well" style="height:780px;flex:none">
-    <!-- <img class="photo" src="photo-detail.jpg" alt="" style="object-position:center 50%"> -->
-    <div class="well-note">[仓库实拍位 · 合好的一箱 · 红圈对准箱标或封口位置]</div>
-
-    <div class="tape both" style="position:absolute;left:44px;top:56px;padding:28px 56px;transform:rotate(-2.5deg)">
-      <div style="display:flex;align-items:center;gap:24px">
-        <span class="tape-no">重点 01</span>
-        <h2 class="tape-title" style="font-size:70px">合箱前先确认不退换</h2>
-      </div>
-    </div>
-
-    <!-- 红圈：按照片里要指的位置微调 left/top -->
-    <svg class="ring" style="left:320px;top:360px" width="340" height="210" viewBox="0 0 360 230">
-      <path class="under" d="M40 120 C 30 50, 150 18, 250 30 C 340 44, 350 150, 260 190 C 170 222, 50 200, 36 132 C 32 108, 60 84, 90 76"/>
-      <path class="over"  d="M40 120 C 30 50, 150 18, 250 30 C 340 44, 350 150, 260 190 C 170 222, 50 200, 36 132 C 32 108, 60 84, 90 76"/>
-    </svg>
-  </div>
-
-  <div class="label perf" style="flex:1 1 auto;margin-top:-24px;z-index:5;padding:64px 72px 52px;display:flex;flex-direction:column;justify-content:space-between">
-    <div>
-      <div class="mono-label">现场提醒 · WHY IT MATTERS</div>
-      <p class="why">几家店的包裹一旦拆袋合成整箱，再发现其中一件要退换，就得整箱重拆重打，既耽误船期又多花工时。</p>
-      <div class="mono-label" style="margin-top:36px">照这样做 · ACTION</div>
-      <div style="display:flex;align-items:flex-start;gap:22px;margin-top:14px">
-        <span class="box on"><svg viewBox="0 0 64 64"><path d="M10 34 L 26 50 L 58 6"/></svg></span>
-        <p class="act">到仓验货照看清每件都没问题，再点申请合箱</p>
-      </div>
-    </div>
-
-    <div style="display:flex;flex-wrap:wrap;gap:14px">
-      <span class="pending">免费留仓 __ 天 · 待运营确认</span>
-      <span class="pending">入仓拍照验货规则 · 待确认</span>
-    </div>
-  </div>
-
-  <div class="airmail"></div>
-</section>
-
-<!-- ===================== X05 · 寄前核对清单（末页收藏引导卡） ===================== -->
-<section class="card kraft" id="xhs-05" data-recipe="X05">
-  <div style="padding:64px 64px 52px;flex:1 1 auto;display:flex;flex-direction:column;justify-content:space-between;position:relative;z-index:4">
-    <div class="tape both" style="align-self:flex-start;padding:34px 68px;transform:rotate(-2.8deg)">
-      <h2 class="tape-title" style="font-size:84px">寄出前核对这 5 件事</h2>
-    </div>
-
-    <div class="label perf" style="padding:64px 60px 58px;transform:rotate(-0.8deg)">
-      <div class="mono-label" style="margin-bottom:28px">国内仓 → 海外 · 下单合箱前自查清单</div>
-      <ol class="checklist">
-        <li>
-          <span class="box on"><svg viewBox="0 0 64 64"><path d="M10 34 L 26 50 L 58 6"/></svg></span>
-          <div><p class="item">等最后一家店包裹到齐入库，再统一合箱</p><span class="pending">免费仓储 __ 天</span></div>
-        </li>
-        <li>
-          <span class="box on"><svg viewBox="0 0 64 64"><path d="M10 34 L 26 50 L 58 6"/></svg></span>
-          <div><p class="item">仓库收件地址与识别码原样复制，一字别漏</p></div>
-        </li>
-        <li>
-          <span class="box"><svg viewBox="0 0 64 64"><path d="M10 34 L 26 50 L 58 6"/></svg></span>
-          <div><p class="item">要退换的单件先处理完，剩下的再封箱</p></div>
-        </li>
-        <li>
-          <span class="box"><svg viewBox="0 0 64 64"><path d="M10 34 L 26 50 L 58 6"/></svg></span>
-          <div><p class="item">大件提前看外箱长宽高，对比自提 / 卡派 / 拼邮</p><span class="pending">计泡系数 __</span></div>
-        </li>
-        <li>
-          <span class="box"><svg viewBox="0 0 64 64"><path d="M10 34 L 26 50 L 58 6"/></svg></span>
-          <div><p class="item">食品药品等敏感货先发客服确认可走专线</p></div>
-        </li>
-      </ol>
-    </div>
-
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div class="label" style="padding:14px 24px;transform:rotate(0.8deg)">
-        <span class="mono-label" style="color:var(--ink);font-size:21px;font-weight:700">收藏这张 · 发货前逐条对一遍 · 杨美西转运</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="airmail"></div>
 </section>
 
 <!-- =========================================================================
-     OPTIONAL COMPONENT: .tally「正」字计数（默认禁用！）
-     触发条件：仅当用户明确要求写「数坑帖 / N 个容易出错的点」时，才允许复制下方标签挂入右上角。
-     普通攻略、计费、时效、对比、晒单、常规清单帖严禁启用！
-     =========================================================================
-  <div class="label" style="position:absolute;z-index:6;right:48px;top:48px;width:176px;padding:14px 14px 10px;transform:rotate(3deg)">
-    <svg class="tally" data-n="3" viewBox="0 0 200 200" width="148" height="148"><g>
-      <path d="M24 46 C 60 34, 118 44, 150 35 S 176 30, 180 33"/>
-      <path d="M98 38 C 106 80, 94 126, 103 178"/>
-      <path d="M106 108 C 122 100, 138 110, 164 99"/>
-      <path d="M52 104 C 58 124, 48 150, 55 176"/>
-      <path d="M16 180 C 62 166, 104 181, 146 170 S 184 165, 190 168"/>
-    </g></svg>
-    <div class="mono-label" style="font-size:20px;text-align:center;letter-spacing:.1em">03 / 05</div>
+     C02 · 照片插页封面（有真实、已授权的亲子共读照片时，与 C01 二选一）
+     骨架：蓝区缩短到 y0–380，仍保留书脊 / 折角 / 页脚；照片做「贴在书页上的照片」。
+     空状态：没有真实照片 → 删掉 .photo-insert 整块，不留占位框；或直接改用 C01。
+             .photo-empty 只是骨架演示，出图前替换成 <img> 或整块删除。
+     ========================================================================= -->
+<div class="cap">C02 · 照片插页封面（有真实照片才用；无照片删整块）</div>
+<section class="card c02" id="xhs-c02" data-recipe="C02">
+  <div class="bluefield" style="height:380px"></div>
+  <div class="spine"><span class="spg">02</span></div>
+  <div class="imprint">EMBOLEN · 家庭共读手册</div>
+  <div class="entitle">READ ALOUD,<br>GROW SLOWLY</div>
+  <div class="enote">给 1–12 岁孩子的英语共读手册</div>
+  <div class="vol">VOL. 03 — 2026 SPRING</div>
+  <div class="dogear"></div>
+
+  <h2 class="title">翻到哪页，<br><span class="hl">就聊</span>哪页。</h2>
+  <div class="body">这张照片是上周三拍的。他读到一半，突然把书举起来给我看。</div>
+  <div class="note hand">真实，比精修重要。</div>
+  <div class="date hand">第 15 天 · 3 月 10 日</div>
+
+  <!-- 照片插页：真实、已授权照片 → <img src="assets/photo-week14.jpg" alt="">；
+       没有照片 → 整个 .photo-insert 删除（不留占位框）。 -->
+  <div class="photo-insert">
+    <div class="photo-empty">
+      <span class="pe-k">把照片贴在这里</span>
+      <span class="pe-s">真实、已授权 · 无照片删整块</span>
+    </div>
   </div>
--->
+
+  <div class="foot">
+    <div class="rule"></div>
+    <div class="row"><span class="l">英博伦 · 家庭共读手册</span><span class="r">02 / 10</span></div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     P01 · 一句（观点 / 转折 / 金句）
+     骨架：宋体 96px 主句（≤4 行）压一条荧光条 + 右侧竖排 Yozai 批注；允许 ≥1/3 留白。
+     空状态：没有值得单独成页的一句话，就不开 P01（不要为了凑页数拉长）。
+     ========================================================================= -->
+<div class="cap">P01 · 一句 · 96px 主句压荧光条 + 页边竖排批注（允许 ≥1/3 留白）</div>
+<section class="card p01" id="xhs-p01" data-recipe="P01">
+  <div class="spine"><span class="spg">03</span></div>
+  <div class="phead"><span class="k">一句 · ONE LINE</span><span class="m">VOL.03 · P.01</span></div>
+
+  <p class="quote">他记得的，<br>不是你教了什么，<br>是你<span class="hl">陪你</span>读过。</p>
+  <div class="margin hand">读到第 14 天。</div>
+
+  <div class="foot">
+    <div class="rule"></div>
+    <div class="row"><span class="l">英博伦 · 家庭共读手册</span><span class="r">03 / 10</span></div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     P02 · 双声部（亲子共读现场）—— 全系统唯一的「两个人」
+     骨架：左右两栏 + 1px 中线；左大人（Noto Sans SC 38px 短句）/ 右孩子（Andika 56px + Yozai 原话）。
+     空状态：没有真实发生过的「两句话」，不开这张；孩子原话必须是真实的，不要代写。
+     ========================================================================= -->
+<div class="cap">P02 · 双声部 · 大人一句话 / 孩子一句话（唯一的「两个人」）</div>
+<section class="card p02" id="xhs-p02" data-recipe="P02">
+  <div class="spine"><span class="spg">04</span></div>
+  <div class="phead"><span class="k">共读现场 · TWO VOICES</span><span class="m">VOL.03 · P.02</span></div>
+  <h2 class="ptitle" style="position:absolute;left:136px;top:176px;z-index:3;font-family:var(--f-serif);font-weight:900;font-size:64px;line-height:1.2;color:var(--ink)">两种声音，一页书</h2>
+  <div class="psub hand" style="position:absolute;left:136px;top:288px;z-index:3;font-size:31px;line-height:1.5;color:var(--muted)">第 14 天 · 读完《The Whale》</div>
+
+  <div class="divider"></div>
+  <div class="col l">
+    <div class="k">大人 · 这样说</div>
+    <p>不会读，也没关系。</p>
+    <p>我们把它读成故事。</p>
+    <p>你指到哪里，</p>
+    <p class="last">我就读到哪里。</p>
+  </div>
+  <div class="col r">
+    <div class="k">孩子 · 这样说</div>
+    <div class="en"><span class="hl">I can</span> read it!</div>
+    <div class="said hand">我自己读的！</div>
+    <div class="note hand">他指着 whale 那一页，<br>读了三次。</div>
+  </div>
+  <div class="bottomnote hand">这一页，记下他第一次主动指读。</div>
+
+  <div class="foot">
+    <div class="rule"></div>
+    <div class="row"><span class="l">英博伦 · 家庭共读手册</span><span class="r">04 / 10</span></div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     P03 · 步骤（方法 / 共读流程）
+     骨架：纵向 01–05 + 一条竖线；每步 ≤24 字；无 icon、无箭头装饰；右侧挂 1 条手写批注。
+     空状态：步骤超过 5 条 → 拆成两张，不要在 40px 字号下硬塞。
+     ========================================================================= -->
+<div class="cap">P03 · 步骤 · 01–05 竖线编号，每步 ≤24 字</div>
+<section class="card p03" id="xhs-p03" data-recipe="P03">
+  <div class="spine"><span class="spg">05</span></div>
+  <div class="phead"><span class="k">步骤 · FIVE STEPS</span><span class="m">VOL.03 · P.03</span></div>
+  <h2 class="ptitle" style="position:absolute;left:136px;top:176px;z-index:3;font-family:var(--f-serif);font-weight:900;font-size:64px;line-height:1.2;color:var(--ink)">今晚共读，五步</h2>
+  <div class="psub hand" style="position:absolute;left:136px;top:288px;z-index:3;font-size:31px;line-height:1.5;color:var(--muted)">不用全做到，做到三步就很好。</div>
+  <div class="handnote hand">他今天自己读了第三遍。</div>
+
+  <div class="vline"></div>
+  <div class="steps">
+    <div class="step"><span class="sn">01</span><span class="st">关掉电视，只留一盏灯</span></div>
+    <div class="step"><span class="sn">02</span><span class="st">让他自己挑一本书</span></div>
+    <div class="step"><span class="sn">03</span><span class="st">先读图，再读字</span></div>
+    <div class="step"><span class="sn">04</span><span class="st">英文读一遍，今天<span class="hl">不翻译</span></span></div>
+    <div class="step"><span class="sn">05</span><span class="st">读完抱一下，说明天再读</span></div>
+  </div>
+
+  <div class="foot">
+    <div class="rule"></div>
+    <div class="row"><span class="l">英博伦 · 家庭共读手册</span><span class="r">05 / 10</span></div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     P04 · 对照（路线 / 方法对比）
+     骨架：两栏表头色带 + 每栏 ≤3 行；只比 2 个对象；胜出项压荧光条；不用对勾 / 叉号图标。
+     空状态：想比第 3 个对象 → 换配方或拆页；对比表不放数字承诺。
+     ========================================================================= -->
+<div class="cap">P04 · 对照 · 两栏表头色带 + 每栏 ≤3 行，胜出项压荧光条</div>
+<section class="card p04" id="xhs-p04" data-recipe="P04">
+  <div class="spine"><span class="spg">06</span></div>
+  <div class="phead"><span class="k">对照 · TWO WAYS</span><span class="m">VOL.03 · P.04</span></div>
+  <h2 class="ptitle" style="position:absolute;left:136px;top:176px;z-index:3;font-family:var(--f-serif);font-weight:900;font-size:64px;line-height:1.2;color:var(--ink)">两种读法</h2>
+  <div class="psub hand" style="position:absolute;left:136px;top:288px;z-index:3;font-size:31px;line-height:1.5;color:var(--muted)">同一页书，读法不同。</div>
+
+  <div class="cols">
+    <div class="col">
+      <div class="ch">逐句翻译</div>
+      <div class="cr">一句话停一次</div>
+      <div class="cr">中文先到，英文靠后</div>
+      <div class="cr">读完只记得中文</div>
+    </div>
+    <div class="col">
+      <div class="ch"><span class="hl">先读声音</span></div>
+      <div class="cr">整段读完再问</div>
+      <div class="cr">英文先到，图帮忙</div>
+      <div class="cr"><span class="hl">他会自己翻回去</span></div>
+    </div>
+  </div>
+
+  <div class="why">
+    <div class="wk">为什么</div>
+    <div class="wt">先让他听见英语的声音，<br>再决定要不要翻译。</div>
+  </div>
+  <div class="after hand">翻译不是错，只是先等一等。</div>
+
+  <div class="foot">
+    <div class="rule"></div>
+    <div class="row"><span class="l">英博伦 · 家庭共读手册</span><span class="r">06 / 10</span></div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     P05 · 词句（每周一词 / 句型）
+     骨架：Andika 单词 226px + Charis SIL 音标 + 中文注 + 例句 Andika 52px + 描红格 + 一条家长提示。
+     硬约束：英文永远比中文大；单词 letter-spacing:0（任何字距都会破坏拼读教学）。
+     空状态：描红格最多 1 排（5–8 格）；没有家长提示就不放 .tip，不要凑。
+     ========================================================================= -->
+<div class="cap">P05 · 词句 · Andika 226px（字距 0）+ 音标 + 例句 + 描红格</div>
+<section class="card p05" id="xhs-p05" data-recipe="P05">
+  <div class="spine"><span class="spg">07</span></div>
+  <div class="phead"><span class="k">本周词句 · WORD OF THE WEEK</span><span class="m">VOL.03 · P.05</span></div>
+
+  <div class="word">s<span class="hl">ou</span>nd</div>
+  <div class="phon"><span class="ipa">/saʊnd/</span><span class="zh">声音</span></div>
+
+  <div class="example">
+    <div class="en">I know this sound.</div>
+    <div class="zh">这个声音，我认得。</div>
+  </div>
+
+  <div class="trace"><span class="tk">描一描 · TRACE</span><i>s</i><i>o</i><i>u</i><i>n</i><i>d</i></div>
+
+  <div class="tip">
+    <div class="q hand">指图问：What sound is it？</div>
+    <div class="s">听三遍，跟读一遍，就够了。今天不考他。</div>
+  </div>
+  <div class="bottomnote hand">一个星期只学一个词，够了。</div>
+
+  <div class="foot">
+    <div class="rule"></div>
+    <div class="row"><span class="l">英博伦 · 家庭共读手册</span><span class="r">07 / 10</span></div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     P06 · 清单（今晚就能做 / 共读清单）
+     骨架：宋体标题 72px + 6 行方格清单（其中 2 行留空给家长自己写）+ 手写「做到 N 条就很好」。
+     空状态：清单最多 7 行；做不到的条目直接删掉，不要写「收藏」话术，写「今晚就能做」。
+     ========================================================================= -->
+<div class="cap">P06 · 清单 · 6 行方格（留 2 行空）+ 手写「做到几条就很好」</div>
+<section class="card p06" id="xhs-p06" data-recipe="P06">
+  <div class="spine"><span class="spg">08</span></div>
+  <div class="phead"><span class="k">共读清单 · CHECKLIST</span><span class="m">VOL.03 · P.06</span></div>
+  <h2 class="title h-display" style="position:absolute;left:136px;top:176px;z-index:3;font-family:var(--f-serif);font-weight:900;font-size:72px;line-height:1.2;color:var(--ink)"><span class="hl">今晚</span>的共读清单</h2>
+  <div class="psub hand" style="position:absolute;left:136px;top:300px;z-index:3;font-size:34px;line-height:1.5;color:var(--ink)">不用全做到，三条就很好。</div>
+
+  <div class="list">
+    <div class="item"><span class="box"></span><span class="t">关掉电视，只留一盏灯</span></div>
+    <div class="item"><span class="box"></span><span class="t">让他自己挑一本书</span></div>
+    <div class="item"><span class="box"></span><span class="t">先读封面和图，不急着读字</span></div>
+    <div class="item"><span class="box"></span><span class="t">英文读一遍，今天<span class="hl">不翻译</span></span></div>
+    <div class="item"><span class="box"></span><span class="t"></span></div>
+    <div class="item"><span class="box"></span><span class="t"></span></div>
+  </div>
+  <div class="after hand">今天做到 4 条，就已经很好了。</div>
+
+  <div class="foot">
+    <div class="rule"></div>
+    <div class="row"><span class="l">英博伦 · 家庭共读手册</span><span class="r">08 / 10</span></div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     P07 · 记录（学员成长 / 读书记录）
+     骨架：4 行记录表（读的书 / 新学的词 / 他最喜欢的一页 / 他的一句话）+ 印章。
+     硬约束：字段留空，不预填示例数据；印章只盖真实日期，未确认就保持空白轮廓。
+     ========================================================================= -->
+<div class="cap">P07 · 记录 · 字段留空 + 空白印章轮廓（只盖真实日期）</div>
+<section class="card p07" id="xhs-p07" data-recipe="P07">
+  <div class="spine"><span class="spg">09</span></div>
+  <div class="phead"><span class="k">读书记录 · READING LOG</span><span class="m">VOL.03 · P.07</span></div>
+  <h2 class="title h-display" style="position:absolute;left:136px;top:176px;z-index:3;font-family:var(--f-serif);font-weight:900;font-size:72px;line-height:1.2;color:var(--ink)">读书记录</h2>
+  <div class="psub hand" style="position:absolute;left:136px;top:300px;z-index:3;font-size:31px;line-height:1.5;color:var(--muted)">读第 __ 天 · __ 月 __ 日 · 读了 __ 分钟</div>
+
+  <div class="rows">
+    <div class="record-row"><div class="rl">读的书</div><div class="rv"></div></div>
+    <div class="record-row"><div class="rl">新学的词</div><div class="rv en"></div></div>
+    <div class="record-row"><div class="rl">他最喜欢的一页</div><div class="rv"></div></div>
+    <div class="record-row"><div class="rl">他的一句话</div><div class="rv"></div></div>
+  </div>
+
+  <div class="note hand">记录不用漂亮，<span class="hl">真实</span>就好。</div>
+
+  <!-- 印章：只在真实日期 / 真实完成状态确认后渲染，例如：
+       <div class="stamp"><span class="sk">READ</span><span class="sv">03.09</span><span class="ss">已读 · 12 min</span></div>
+       未确认日期 → 保持下面这个空白轮廓，不预填、不编造。 -->
+  <div class="stampwrap">
+    <div class="stamp" aria-label="印章占位：真实日期确认后再盖">
+      <span class="sk">READ</span>
+      <span class="sv">DAY __</span>
+      <span class="ss">真实日期后盖章</span>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="rule"></div>
+    <div class="row"><span class="l">英博伦 · 家庭共读手册</span><span class="r">09 / 10</span></div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     P08 · 收束（末页 / 下一册预告）
+     骨架：宋体 104px 两行 + 手写晚安句 + 96px 圆形 logo 出版者标记 + 下一册书名 + 折角。
+     唯一允许出现 logo 的内页；封面 0 logo。
+     空状态：下一册未定 → 写「下一册 · 书名待定」，不编造书名；logo 缺失时保留字母 fallback。
+     ========================================================================= -->
+<div class="cap">P08 · 收束 · 两行宋体 + 手写晚安 + 96px 圆形出版者标记 + 折角</div>
+<section class="card p08" id="xhs-p08" data-recipe="P08">
+  <div class="spine"><span class="spg">10</span></div>
+  <div class="phead"><span class="k">下一页 · NEXT</span><span class="m">VOL.03 · P.08</span></div>
+  <div class="dogear"></div>
+
+  <h2 class="title h-display">下个星期，<br>读<span class="hl">第二本</span>。</h2>
+  <div class="p08-hand hand">晚安。书就放在床头。</div>
+
+  <!-- logo：由任务目录提供 assets/logo-embolen.png（96px 圆形模切白边是唯一容器）。
+       缺素材时保留 .fallback 字母标，不重绘、不换色、不旋转。 -->
+  <div class="p08-mark">
+    <div class="mark-seal">
+      <span class="fallback">EB</span>
+      <img src="assets/logo-embolen.png" alt="英博伦 Embolen 出版者标记" onerror="this.remove()">
+    </div>
+    <div class="mt"><b>EMBOLEN</b><span>英博伦 · 家庭共读手册</span></div>
+  </div>
+  <div class="p08-next">下一册 · VOL.04 · 书名待定</div>
+
+  <div class="foot">
+    <div class="rule"></div>
+    <div class="row"><span class="l">英博伦 · 家庭共读手册</span><span class="r">10 / 10</span></div>
+  </div>
+</section>
 
 </main>
 </body>

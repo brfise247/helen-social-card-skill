@@ -61,19 +61,27 @@ git symbolic-ref -q HEAD || echo "⚠ detached HEAD，先 git checkout -B main"
 
 ## 视觉改动先读 DESIGN.md
 
-根目录 `DESIGN.md` 是 Greenbook 卡系统（公众号图片消息 / 小绿书 / 贴图号）的
-设计真源：字体与授权、暖底实测对比度、三竖区制度、裁切安全带、反模式清单。
-`assets/template-greenbook-card.html` 的任何改动都必须与它一致。
-Editorial 与 Swiss 两个既有模式不受它约束，走 `references/style-system.md`。
+根目录 `DESIGN.md` 是**英博伦 Embolen** 的品牌设计真源：**一套品牌系统、两个平台外壳**。
+品牌层（米纸 / 双色蓝墨 / 荧光笔 token、六个 OFL 字面、书脊 / 页脚 / 折角 / 荧光条四个装订装置）
+由两份平台应用共用；平台差异只在封面构图与导出验证，写在 `DESIGN.md` 的「平台应用」一节。
 
-杨美西转运**小红书号**的卡走另一份真源 `DESIGN-xhs.md`（「封箱」：默认满版真仓 + 胶带 + 悬浮回执 `X01`，以及骑缝拆解 `X02`、国际提单 `X03`、实物批注 `X04`、核对清单 `X05`；「正」字计数仅在明确要求写数坑帖时启用），
-`assets/template-xhs-card.html` 的任何改动都必须与它一致。两套系统共享品牌层，版式不共用，不混排。
-出镜人与仓库照片只用真实素材，不用 AI 生成顶替。
+- **小红书 3:4 图文卡** → `assets/template-xhs-card.html`：封面 `C01` 书封 / `C02` 照片插页封面，
+  内页 `P01`–`P08`。模板的任何改动都必须与 `DESIGN.md` 一致。
+- **微信公众号图片消息（小绿书 / 贴图号）** → `assets/template-greenbook-card.html`：首图 `W01` +
+  内页 `P01`–`P08`。平台规格、裁切数学与交付三张的验证见 `references/greenbook-specs.md`。
 
-字体只用 `references/font-license-audit.md` 里核验过的；换 display 面走
-`--display-zh` 换装缝，换之前必须验授权、汉字覆盖、88–118px 下不粘连三项。
+两套模板共用品牌层，不混用别的调色板与字体栈，也不把 Editorial / Swiss 的 recipe 塞进来。
+Editorial 与 Swiss 两个既有模式不受 `DESIGN.md` 约束，仍走 `references/style-system.md`。
+
+英博伦品牌底线：封面 / 首图 0 logo、0 AI 儿童；真实照片只用已授权素材且只做「照片插页」；
+卡面数字一律可核验，未确认用 `.pending`；不承诺效果、不编造学员数据。
+**旧品牌的业务与视觉内容已随品牌迁移整体移除，不要在任何文档或模板里恢复。**
+
+字体只用 `references/font-license-audit.md` 里核验过的。品牌卡的字面固定为 `DESIGN.md` 列出的六个
+OFL 字面，不换装；Editorial / Swiss 换 display 面走各自模板变量与 `references/font-library.md`，
+换之前必须验授权、汉字覆盖、88–118px 下不粘连三项。
 
 ## 交付纪律
 
-卡面上的价格、时效、赔付数字一律是占位示例，**不生产商业承诺**。
-投放前必须换成运营确认的真实口径，且每个数字都要能在小程序里被用户自己复算。
+卡面上的课程数字、学员数据与效果口径一律可核验，**不生产商业承诺**（不写「N 天开口 / 流利」）。
+投放前必须换成运营确认的真实口径；未确认的值留 `.pending` 虚线占位，不预填示例数据，不编造案例。

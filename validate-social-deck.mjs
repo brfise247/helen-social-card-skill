@@ -5,7 +5,7 @@
  *   node validate-social-deck.mjs <task-dir|index.html>
  *
  * Checks each <section class="poster …"> or <section class="card …"> in the target HTML
- * against the rules codified in SKILL.md / DESIGN-xhs.md / qa-checklist.md / components.md.
+ * against the rules codified in SKILL.md / DESIGN.md / qa-checklist.md / components.md.
  * Exits 1 if any FAIL.
  *
  * Rules implemented:
@@ -21,7 +21,8 @@
  *   R10 花体字作用域/族名      data-title-font 生效时花体字只许出现在封面级显示标题上，
  *                              且 font-family 必须写 CSS 族名而不是中文字体名
  *   R11 花体字伪粗体防糊      单字重花体字（如仓耳周珂正大榜书/千图笔锋手写体）computedWeight >= 600 会触发伪粗体糊字
- *   R12 小红书封箱专属守卫    拦截已否决的「上图+下满宽贴边死白底列表」封面，并对可选组件 .tally（「正」字）给出启用核对提醒
+ *   R12 小红书英博伦书封守卫  封面必须齐装订装置（.spine 书脊 + .foot 页脚行），否决
+ *                            「上图+下满宽贴边死白底列表」封面；旧系统 .tally 残留只告警
  */
 import { chromium } from "playwright";
 import { fileURLToPath } from "node:url";
@@ -539,21 +540,27 @@ for (const s of sections) {
     });
   }
 
-  // R12 小红书「封箱」专属守卫（可选组件 .tally 提醒 + 否决的满宽平切白底封面拦截）
+  // R12 小红书「英博伦 Embolen 书封」专属守卫（见 DESIGN.md「封面解剖」「Layout」）
+  //   1. 否决项：封面「上图 + 下满宽贴边平切白底列表块」（SaaS/PPT 割裂列表风，旧系统遗留反模式）
+  //   2. 装订装置：封面必须含 .spine（56px 蓝书脊）与 .foot（页脚行）——品牌靠装订认出来，封面 0 logo
+  //   3. 旧系统可选组件 .tally（「正」字计数）已随旧物流卡系统废弃：残留只告警，不报错
   if (style === "xhs") {
     const xhsCheck = await s.evaluate((el, isFirst) => {
+      const recipe = el.dataset.recipe || "";
       const er = el.getBoundingClientRect();
       const tallies = [...el.querySelectorAll(".tally")].filter(t => {
         const r = t.getBoundingClientRect();
         return r.width > 0 && r.height > 0 && getComputedStyle(t).display !== "none" && getComputedStyle(t).visibility !== "hidden";
       });
+      // 封面判定：文档第一张，或配方 C01 书封 / C02 照片插页封面
+      const isCover = isFirst || el.id === "xhs-c01" || /^C0[12]$/.test(recipe);
+      const spine = el.querySelector(".spine");
+      const foot = el.querySelector(".foot");
+      // 否决项：封面上「满宽 + 平切 + 贴底 + 不透明色块、高 300–760」的列表块
       let vetoedFlatCover = false;
-      const isCover = isFirst || el.id === "xhs-01" || el.dataset.recipe === "X01";
-      const isManifest = el.classList.contains("manifest") || el.dataset.recipe === "X03";
-      const hasSeamTape = Boolean(el.querySelector(".seam-tape, .seam-tape-wrap")) || el.dataset.recipe === "X02";
-      if (isCover && !isManifest && !hasSeamTape) {
+      if (isCover) {
         for (const n of el.children) {
-          if (n.matches(".photo-well, .bg-vignette, .airmail, .airmail-edge, .cover-shell, .hero-tape, .tape, .sticker, svg")) continue;
+          if (n.matches(".spine, .bluefield, .dogear, .photo-insert, .foot, .phead, svg, img")) continue;
           const cs = getComputedStyle(n);
           const bg = cs.backgroundColor;
           const isOpaqueLight = bg && !/rgba?\(\s*0\s*,\s*0\s*,\s*0\s*,\s*0?\s*\)|transparent/.test(bg);
@@ -565,21 +572,50 @@ for (const s of sections) {
           }
         }
       }
-      return { hasTally: tallies.length > 0, vetoedFlatCover };
+      return {
+        hasTally: tallies.length > 0,
+        vetoedFlatCover,
+        isCover,
+        recipe,
+        hasSpine: Boolean(spine),
+        spineW: spine ? Math.round(spine.getBoundingClientRect().width) : 0,
+        hasFoot: Boolean(foot),
+      };
     }, report.length === 0);
 
     if (xhsCheck.hasTally) {
       warns.push({
         rule: "R12",
-        msg: `检测到「正」字计数 (.tally) —— 该组件默认禁用，仅在用户明确要求写「数坑帖 / N个容易出错的点」时允许启用`,
-        fix: "若非用户点名的数坑帖，请移除 .tally 标签块（见 DESIGN-xhs.md）",
+        msg: `检测到旧系统「正」字计数 (.tally) —— 该组件随旧物流卡系统废弃，英博伦书封系统不使用`,
+        fix: "删除 .tally 标签块；「被用过」的物证由折角 / 页码 / 手写日期 / 荧光条承担（见 DESIGN.md「Do's and Don'ts」）",
       });
     }
     if (xhsCheck.vetoedFlatCover) {
       fails.push({
         rule: "R12",
         msg: `封面出现「上图 + 下满宽贴边平切白底块」（已否决的 SaaS/PPT 割裂列表风）`,
-        fix: "封面请改用 X01 真仓大片配方：100% 满版仓库实拍铺底 + 四周留有 52px 安全边距的悬浮回执卡 (.floating-slip)",
+        fix: "封面改用 C01 书封配方：蓝区 y0–560 + 三行宋体 124px + 一条荧光黄 + 一个折角（见 DESIGN.md「封面解剖」）",
+      });
+    }
+    if (xhsCheck.isCover && !xhsCheck.hasSpine) {
+      fails.push({
+        rule: "R12",
+        msg: `封面缺少 .spine 书脊 —— 四个装订装置是英博伦的书的身份，缩略图里就是那一条蓝边`,
+        fix: '加入 <div class="spine"><span class="spg">01</span></div>：左侧 56px 通栏 --sea，底部竖排 Literata 页码（见 DESIGN.md「Layout」）',
+      });
+    }
+    if (xhsCheck.isCover && xhsCheck.hasSpine && xhsCheck.spineW !== 56) {
+      warns.push({
+        rule: "R12",
+        msg: `.spine 书脊实测 ${xhsCheck.spineW}px，设计规格是 56px`,
+        fix: "把 .spine 宽度改回 56px —— 缩略图里这条蓝边的粗细是品牌识别的一部分",
+      });
+    }
+    if (xhsCheck.isCover && !xhsCheck.hasFoot) {
+      fails.push({
+        rule: "R12",
+        msg: `封面缺少 .foot 页脚行 —— 1px 页脚线 + 品牌行 + Literata 页码是第四个装订装置`,
+        fix: "加入 .foot（margin-top:auto 流式承载，禁止 position:absolute 压实）：1px 线 y1288 + 左「英博伦 · 家庭共读手册」+ 右页码",
       });
     }
   }
@@ -754,7 +790,7 @@ for (const { meta, fails, warns } of report) {
 }
 
 lines.push("");
-lines.push(`Legend: R1 overflow · R2 footer collision · R3 swiss bold display · R4 min font · R5 4-band density · R6 h-xl cap · R7 figure margin drift · R8 visual bounds · R9 title gap · R10 花体字作用域/族名 · R11 花体字防伪粗体糊字 · R12 小红书封箱守卫`);
+lines.push(`Legend: R1 overflow · R2 footer collision · R3 swiss bold display · R4 min font · R5 4-band density · R6 h-xl cap · R7 figure margin drift · R8 visual bounds · R9 title gap · R10 花体字作用域/族名 · R11 花体字防伪粗体糊字 · R12 小红书英博伦书封守卫`);
 lines.push(`Exit code 1 only on FAIL. Warnings are advisory.`);
 
 console.log(lines.join("\n"));

@@ -61,13 +61,19 @@ local-tests/social-card-example/output/
 
 做任何视觉决策前，先读根目录 `DESIGN.md`。
 
-它是 Greenbook 卡系统（公众号图片消息 / 小绿书 / 贴图号）的设计真源：
-字体与授权、色板与实测对比度、三竖区制度、裁切安全带、以及本类目专属的反模式清单，
-全部定义在那里。`assets/template-greenbook-card.html` 的任何改动都必须与它一致。
-未经项目负责人明确同意，不要偏离；在 QA 模式下，发现与 `DESIGN.md` 不符的实现要主动标出。
+它是**英博伦 Embolen** 的品牌设计真源：一套品牌系统、两个平台外壳。
+品牌层（米纸 / 双色蓝墨 / 荧光笔 token、六个 OFL 字面、书脊 / 页脚 / 折角 / 荧光条四个装订装置）
+由小红书与公众号两套平台应用共用；平台差异只在封面构图与导出验证（写在「平台应用」一节）。
+
+- 小红书 3:4 图文卡：`assets/template-xhs-card.html`（封面 `C01` / `C02` + 内页 `P01`–`P08`）。
+- 微信公众号图片消息 / 小绿书 / 贴图号：`assets/template-greenbook-card.html`（首图 `W01` + 内页 `P01`–`P08`）。
+  平台规格、裁切数学与导出验证见 `references/greenbook-specs.md`。
+
+两套模板的任何改动都必须与 `DESIGN.md` 一致。未经项目负责人明确同意，不要偏离；
+在 QA 模式下，发现与 `DESIGN.md` 不符的实现要主动标出。
 
 Editorial 与 Swiss 两个既有模式不受 `DESIGN.md` 约束，它们仍走 `references/style-system.md`
-与 `references/components.md`。三套系统互不混用调色板与字体栈。
+与 `references/components.md`。三类系统互不混用调色板与字体栈。
 
 ## 本仓协作规则的真源是 CLAUDE.md
 

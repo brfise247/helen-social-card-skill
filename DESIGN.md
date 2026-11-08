@@ -1,303 +1,355 @@
 ---
 # gstack: design-md-format=spec
-name: Greenbook Card System (贴图号 / 小绿书 图片消息卡)
-description: 航空运单纸上一道摊开给你看的加法题：暖纸、等宽数字、红蓝航空边饰，安静但要求你自己复算。
+name: 英博伦 Embolen · 翻到起毛边（家庭共读手册 · 社交图文卡）
+description: 米纸、双色蓝墨与一支荧光笔：把英语陪读做成一本会被翻旧、会被写字的家庭共读手册。
 colors:
-  primary: "#0060C9"        # --verify · 租户色，唯一可变项。只标合计线与合计数
-  on-primary: "#fffaf1"
-  surface: "#fffaf1"        # --paper · 卡面底
-  surface-rule: "#f4ecde"   # --paper-rule · 发丝规线 / 次级面
-  page: "#f5ede1"           # --paper-page · 预览页底，不进导出
-  text: "#1A1D26"           # 正文 · 14.1:1
-  text-muted: "#7c5922"     # --text-warm · 6.05:1。注意：不是 $text-muted #CACCD1
-  ink: "#102546"            # --ink · 中文 display + 算式数字 · 14.7:1
-  ink-soft: "#27466d"       # --ink-soft · 次级正文 · 9.25:1
-  accent: "#d0433b"         # --annotate · 航空红。4.44:1，仅 ≥24px 粗体数字与划线
-  edge-blue: "#2e5fa3"      # --edge-blue · 航空蓝。仅 .airmail-edge，禁止进版心
-  success: "#0060C9"        # 本系统无交通灯语义色，成功态复用合计蓝
-  warning: "#d0433b"        # 同上，警示复用航空红
-  error: "#d0433b"
+  primary: "#4793D0"        # --sea 鲸鱼蓝（logo 实测）。只做面积、1px 线与 ≥64px 大字
+  on-primary: "#FAF6EC"     # --paper 纸白。蓝底反白只给 ≥64px 或 ≥22px 粗体
+  surface: "#FAF6EC"        # --paper 米纸，整卡底
+  surface-soft: "#F2EADB"   # --paper-soft 次级纸面 / 表头
+  surface-deep: "#EDE3D0"   # --paper-deep 折角背面 / 纸影
+  text: "#193B6F"           # --ink 蓝墨。10.26:1，标题与正文
+  text-muted: "#55677C"     # 5.38:1，页码 / 元信息 / 手写批注以外的弱化文字
+  brand-ink: "#2C6390"      # 5.91:1，品牌蓝的小字替身
+  accent-pink: "#A33C64"    # 5.74:1，小字粉墨
+  accent-green: "#4E6A2B"   # 5.69:1，小字绿墨
+  highlight: "#ECB957"      # --sun 荧光笔。只做底，上面永远压 --ink（6.14:1）
+  sky: "#9AC9ED"            # 浅腹蓝。只做底 / 描红格 / 照片衬，不做字
+  pink: "#DA6997"           # 泡泡粉。只做块，不做字
+  sprout: "#87AC52"         # 新芽绿。只做块，不做字
+  success: "#4E6A2B"
+  warning: "#8A5A0A"
+  error: "#A33C64"
 typography:
   display:
-    fontFamily: Smiley Sans Oblique
-    fontWeight: 500
-    fontSize: 118px
+    fontFamily: Noto Serif SC
+    fontWeight: 900
+    fontSize: 124px
     letterSpacing: 0.01em
   body:
     fontFamily: Noto Sans SC
-    fontSize: 30px
-    lineHeight: 1.72
+    fontWeight: 500
+    fontSize: 40px
+    lineHeight: 1.6
+  hand:
+    fontFamily: Yozai
+    fontWeight: 400
+    fontSize: 36px
   label:
-    fontFamily: Martian Mono
-    fontSize: 26px
-    letterSpacing: 0.16em
-  mono:
-    fontFamily: Martian Mono
-    fontFeature: tnum
+    fontFamily: Literata
+    fontWeight: 500
+    fontSize: 23px
+    letterSpacing: 0.08em
+  read:
+    fontFamily: Andika
+    fontWeight: 700
+    fontSize: 226px
+    letterSpacing: 0
+  ipa:
+    fontFamily: Charis SIL
+    fontWeight: 400
+    fontSize: 44px
 rounded:
   sm: 0px
   md: 0px
   lg: 0px
-  full: 0px
+  full: 9999px
 spacing:
   xs: 8px
-  sm: 12px
-  md: 16px
-  lg: 24px
-  xl: 32px
-  2xl: 48px
+  sm: 16px
+  md: 24px
+  lg: 32px
+  xl: 48px
+  2xl: 64px
+  3xl: 96px
 components:
-  board:
+  card:
     width: 1080px
     height: 1440px
     backgroundColor: "{colors.surface}"
     rounded: "{rounded.sm}"
-  zone-band:
-    top: 416px
-    height: 608px
-  airmail-edge:
-    height: 14px
-    stripeWidth: 22px
-    angle: 45deg
-  rule-total:
-    height: 4px
+  spine:
+    width: 56px
     backgroundColor: "{colors.primary}"
-  rule-hair:
+    textColor: "{colors.on-primary}"
+  footer-rule:
     height: 1px
-    backgroundColor: "{colors.text-muted}"
-    opacity: 0.38
-  ledger-value:
-    fontFamily: "{typography.mono.fontFamily}"
-    fontSize: 44px
-    textColor: "{colors.ink}"
-  total-value:
-    fontFamily: "{typography.mono.fontFamily}"
-    fontSize: 96px
-    textColor: "{colors.primary}"
-  pen-strike:
-    fontSize: 52px
-    textColor: "{colors.text-muted}"
-    strikeColor: "{colors.accent}"
-    strikeHeight: 5px
-    strikeAngle: -7deg
-  waybill:
-    borderTopColor: "{colors.ink}"
-    borderBottomColor: "{colors.text-muted}"
+    backgroundColor: "{colors.text}"
+    opacity: 0.24
+  highlighter:
+    backgroundColor: "{colors.highlight}"
+    height: 0.5em
+    rotate: -0.4deg
+    textColor: "{colors.text}"
+  dogear:
+    size: 132px
+    backgroundColor: "{colors.surface}"
+    underside: "{colors.surface-deep}"
+  stamp:
+    size: 160px
+    borderWidth: 3px
+    borderStyle: dashed
+    borderColor: "{colors.accent-pink}"
+    textColor: "{colors.accent-pink}"
+  photo-insert:
+    borderWidth: 16px
+    borderColor: "#FFFFFF"
+    rotate: -1.8deg
+    shadow: 0 18px 38px rgba(25,59,111,.18)
+  trace-cell:
+    width: 74px
+    height: 88px
+    borderWidth: 2px
+    borderStyle: dashed
+    borderColor: "{colors.sky}"
+  ledger-rule:
+    height: 1px
+    backgroundColor: "{colors.text}"
+    opacity: 0.22
 ---
 
-# Greenbook Card System
+# 英博伦 Embolen ·「翻到起毛边」
 
-适用范围：微信公众号「图片消息」（小绿书 / 2026 年后官方称贴图号）的 3:4 图文卡组。
-不适用于本技能既有的 Editorial（杂志电子墨水）与 Swiss International 两个模式，也不适用于
-公众号 21:9 + 1:1 封面对（那条走 `references/title-shortener.md`）。
+适用范围：英博伦品牌的小红书 3:4 图文卡、微信公众号「图片消息 / 小绿书 / 贴图号」3:4 卡组，以及公众号封面对之外的品牌社交图文。
+这是一套**品牌设计系统**：品牌层（纸、墨、荧光笔、六个字面、装订装置）由两份平台应用共用；平台差异写在「平台应用」一节。
+Editorial 与 Swiss 两个通用模式仍走 `references/style-system.md`，不套用本文的调色板与字体栈；Greenbook 平台规格见 `references/greenbook-specs.md`。
 
 ## Overview
 
-**Creative North Star:** 把计算器转过来推到对方面前 —— 用可复算的算术换信任，而不是用形容词换信任。
+**Creative North Star:** 不做「儿童英语品牌」，做那本被翻到起毛边的**家庭共读手册**的出版者。
 
-**Product context:** 美西转运（MeixiPro），美国西岸到中国大陆的跨境集运，多租户物流 SaaS 上的一个租户。
-用户在服务商之间真正比较的只有三件事：一磅多少钱、几天到、丢了怎么赔。
-同类目公众号高度同质：蓝色渐变、货机、地球、虚线航弧，加上居中的粗体「专业 / 可靠 / 安全」。
-它们都在卖抽象物，而用户在比数字。
+**Product context:** 英博伦（英文名 Embolen）是 1–12 岁英语学习成长品牌，给中国家庭提供少儿英语学习内容与课程。
+掏钱的是家长（妈妈为主），在手机上的 小红书 / 微信公众号 里刷到这些卡；孩子是内容的使用者。
+品牌主张是一句话：**温暖的陪伴孩子成长。**
+同品类的视觉语言高度同质：高饱和蓝 / 黄 / 绿色块、圆体或卡通字、卡通儿童与吉祥物、AI 或图库的「假笑儿童照」，以及「3 天开口说」式的承诺型标题。
+本系统的差异化不在「更可爱」，而在**更像一本书**：纸、字、装订、使用痕迹。
 
 **Mode per surface:**
-- Persuade（首图 G01/G02）：在滑动流里争取一次停留，靠数字本身而非形容词。
-- Operate（拆账页 G03/G04/G05）：读者在核对一笔账，版式服务于对齐与可复算。
-- Read（FAQ / 说明页 G06）：段落节奏优先，字号不低于 30px。
-- Experience：不适用。这是静态图，没有沉浸面。
+- Persuade（封面 C01 / W01）：在信息流里先用「不对劲的安静」让人停一下，再用一句具体的家庭场景把人拉进来。
+- Read（内页 P01 / P02 / P05）：内容要真的能读，20–22 字一行，英文单词永远是画面里最大的字。
+- Operate（P03 / P04 / P06 / P07）：步骤、对照、清单、记录，拿起来就能用。
+- Experience：不适用，交付物是静态 PNG。
 
-**记住的那一件事：** 账算得清，不坑人。
+**记住的那一件事：** 温暖的陪伴孩子成长。
+不靠口号说出来，靠四个**物证**让人看到：折角（这页被折过）、页码（读到第几页）、手写日期（哪天读的）、荧光条（哪句被划过）。
+
+**Reference:**
+- 猿辅导 / 斑马 AI 课的集团品牌化案例（品类主流：几何符号 + 高饱和识别色 + 科技感字体）：[adquan.com](https://www.adquan.com/article/296308)
+- 50 个学校品牌复盘（家长对图库 / AI 儿童照的信任下降；真实感 > 精修感）：[schoolbranding.agency](https://schoolbranding.agency/blog/school-branding-design-trends-2025-review)
+- 伴鱼品牌形象更新（少儿英语赛道品牌升级的公开案例）：[微信公众号](http://mp.weixin.qq.com/s?__biz=MzA5Mzk2ODAzMA==&mid=2649811754&idx=1&sn=e383ba40e8233e97765d98bfa35eafab)
 
 **Key characteristics:**
-- 暖纸底，在全白 feed 里像一张实体单据而不是又一块屏幕。
-- 最大的字是数字，中文退为注解。这是对类目习惯的反转。
-- 红笔批改每套卡只出现一次，那一次就是记忆点。
-- 45° 红白蓝航空边饰是品类符号，跨租户恒定。
-- 构图从裁切反推：论点必须活在 y416–1024 那条带里。
+- **封面 0 logo、0 卡通儿童、0 渐变**：前 3 秒先像一本书，不像一条广告。
+- **蓝书脊 + 页脚行 + 折角 + 错位荧光条**四个装订装置固定复用；遮住品牌名，也认得出这是英博伦。
+- **温暖来自使用痕迹**：折角、手写日期、荧光笔、印章、空白待填的记录行——不靠暖色滤镜或贴纸堆砌。
+- **英文是教学内容，不是装饰**：给孩子的英文一律用 Andika（SIL 识字设计），单词永远比中文大，字距永远为 0。
 
 ## Colors
 
-**Strategy:** Committed。暖纸拥有整张卡，中性色从纸派生，品牌色稀缺到只做一件事。
+**Strategy:** Committed，但只有三种材料：**纸**（米纸）、**墨**（双色蓝墨：蓝墨 / 粉墨 / 绿墨）、**荧光笔**（阳光黄）。
+颜色不是配色方案，是印刷工艺；每一种颜色只承担一种材料角色。
 
-**Light or dark:** 固定浅色。使用场景是白天、手机、微信白底信息流；暖纸相对纯白 feed 已经形成分离，
-再上深色只会变成类目里另一种噪音。此判断随使用场景变，不随流行变。
+**Light or dark:** 固定浅色。使用场景是白天、手机、家庭阅读场景；米纸是这套系统的物理身份。不做深色模式，不跟着流行变。
 
-色分两层。**租户层**只有 `--verify` 一个变量，换租户改它即可；它的职责被压缩到极小：
-只染合计线（`.rule-total`）和合计数（`.tv`）。于是版面上唯一的彩色终点就是「算出来的那个数」，
-视线自然落在结论上，品牌色和论点合而为一。
+### 鲸鱼蓝的五条用法
 
-**跨租户恒定层**是 `--annotate` 与 `--edge-blue`，来自 `apps/miniapp/src/styles/variables.scss`
-的 `$airmail-red` / `$airmail-blue`。那两个 token 在源仓里带着注释「国际航空信封边饰：红/白/蓝/白
-45° 斜纹，不随租户主色变」，本来就不是某一家的颜色，而是「国际邮件」这个品类的颜色。
-本系统把它们从只用过一次的状态展开为整套卡的识别装置。
+`#4793D0` 来自品牌 logo 鲸鱼主体（259px 商标图，去除白底后 k-means 主簇 25.3%）。它对米纸只有 **3.06:1**，所以它**不是字色，是面积**：
 
-中性色全部落在暖底上，对比度逐个实测（白底数值不适用，暖底更亮）：
+1. **它是面积**：封面蓝区 0–560px、书脊 56px 通栏、每 6 页一张整版蓝页。用户记住的是「那块蓝」。
+2. **它是线**：1px 规则线、表头、进度条、下划线。非文本元素 3:1 即可，3.06 刚过线。
+3. **它是大字**：≥64px 的短标题 / 反白大字（缩略图 ≥24px），满足 large-text AA 3:1。蓝底反白同理：≥64px，或 ≥22px 粗体。
+4. **它的小字替身是 `#2C6390`**：同族深一号，5.91:1，肉眼仍是品牌蓝，但承担正文与小字。
+5. **蓝页只放一句话**：整版 `#4793D0` 上永远 ≤12 字，让对比度问题在结构上消失，而不是靠「这次例外」。
 
-| Token | 值 | 对 `#fffaf1` | 判定 |
-|---|---|---|---|
-| `--ink` | `#102546` | 14.7:1 | AAA |
-| `--text` | `#1A1D26` | 14.1:1 | AAA |
-| `--ink-soft` | `#27466d` | 9.25:1 | AAA |
-| `--text-warm` | `#7c5922` | 6.05:1 | AA（正文亦可） |
-| `--verify` | `#0060C9` | 5.74:1 | AA |
-| `--annotate` | `#d0433b` | **4.44:1** | **未过正文 AA，仅大字** |
+### 实测对比度（米纸 `#FAF6EC` 为底）
 
-深色模式不做。不是"以后再说"，是这个表面不存在深色场景。
+| 组合 | 比值 | 允许用途 |
+|---|---|---|
+| `--ink #193B6F` on paper | **10.26:1** | 标题、正文、页脚 |
+| `--brand-ink #2C6390` on paper | 5.91:1 | 品牌蓝语义的小字 / 链接色 |
+| `--accent-pink #A33C64` on paper | 5.74:1 | 粉墨小字、印章文字 |
+| `--accent-green #4E6A2B` on paper | 5.69:1 | 绿墨小字、完成态 |
+| `--muted #55677C` on paper | 5.38:1 | 页码、元信息 |
+| `#4793D0` on paper | 3.06:1 | **仅 ≥64px 大字 / 线 / 面积** |
+| 纸白 on `#4793D0` | 3.06:1 | **仅 ≥64px 大字，或 ≥22px 粗体** |
+| `--ink` on `#ECB957` | 6.14:1 | 荧光条上的标题字 |
+| `--ink` on `#9AC9ED` | 6.30:1 | 浅腹蓝底上的字（不常用） |
+| `#ECB957` on paper | 1.67:1 | **禁止做字**，只做底 |
+| `#DA6997` on paper | 3.02:1 | 只做块 |
+| `#87AC52` on paper | 2.42:1 | 只做块 |
+
+### 其他颜色规则
+
+- **荧光黄是工具，不是颜色**：只做底，上面永远压 `--ink`；不得用黄色做字、做线、做图标。
+- **粉 / 绿原色只做块**：要做小字，用 `--accent-pink #A33C64` / `--accent-green #4E6A2B`。
+- **浅腹蓝 `#9AC9ED` 只做底**：照片衬底、描红格、表格底，不做文字。
+- **不用渐变**：要深就叠印（同形状两层蓝，或蓝上压 12% navy），两层平涂、边缘硬。
+- **不用阴影 / 发光 / 毛玻璃**：深度由纸面层次和 1px 线表达。
 
 ## Typography
 
-五个面，各有不可替代的职责。交付形态是截图（HTML 渲成 PNG 再上传），
-**没有加载时间预算**，所以可以自托管多套、可以堆字重，选面只看合不合适，不看体积。
+全系统只用 **OFL 1.1 字库**，法务只审一份协议，图片成品商用 / 嵌入 / 印刷不再逐次确认，成品无需署名。
 
-**得意黑 Smiley Sans**（SIL OFL 1.1，ZeoSeven CDN id 92，或自托管）承担全部中文 display。
-选它有三个具体理由：字身窄，在 608px 的安全带里每行多塞约 25% 汉字；全局右倾 9.4°，
-倾斜本身就是「加急」的形，不必再画箭头；只有一个字重，反而堵死了"用字重凑层级"的退路。
-中文 display 永不低于 500 —— 这是本系统对宿主技能「越大越轻」的公开违反，理由见下。
+| 角色 | 字体 | 字重 | 来源 | 用法 |
+|---|---|---|---|---|
+| 中文 display | **Noto Serif SC** | 900 | Google Fonts · OFL | 封面 104–128px；内页标题 64–72px；引文 44px/500 |
+| 中文正文 | **Noto Sans SC** | 400 / 500 | Google Fonts · OFL | 正文 40–44px；表格 32–36px |
+| 手写批注 | **Yozai 悠哉** | 400 | github.com/lxgw/yozai-font · OFL | 页边批注 30–44px，单条 ≤12 字 |
+| 拉丁书籍面 | **Literata** | 500 – 900 | Google Fonts · OFL | 书名行、册号、页码、VOL 编号；**不进教学内容** |
+| 拉丁教学面 | **Andika** | 400 / 700 | Google Fonts · SIL OFL | 单词 120–226px；句型 / 例句 44–72px |
+| 音标 | **Charis SIL** | 400 | Google Fonts · SIL OFL | 只在家长注释里出现，24–44px |
 
-**Martian Mono**（SIL OFL 1.1，Google Fonts，wght + wdth 双可变轴）承担数字、标签与元信息。
-它是真正的主角：等宽定宽步进让加法列天然对齐小数点，而**对齐本身就是「算得清」的视觉证明**。
-Width 轴让长数字在安全带内还能再放大一档，不必换字号。
+### 为什么这么选
 
-**Noto Sans SC**（SIL OFL，Google Fonts）承担中文与拉丁正文。选它而不是 MiSans L3，
-是因为 MiSans 的授权要求使用方「特别注明使用了 MiSans 字体」且禁止修改与二次分发字体文件 ——
-一个要随技能打包、离线渲染的模板背不起这个条件。这是授权判定，不是审美判定。
+1. **中文标题用宋体，是最大的逆行。** 品类默认圆体 / 卡通体；宋体一上，气质从 App 变成出版物。900 字重是为 360px 缩略图选的：圆体缩到 32px 会糊，宋体 900 不会。
+2. **教学英文必须 Andika。** SIL 专为识字设计，官方目标是「字形不易互相混淆」（I / l / 1 对照）；孩子看到的就是他要写的。
+3. **Literata 只做「书」的声音。** 书名、册号、页码、VOL 编号；绝不进教学内容，否则「书」和「课」就混了。
+4. **Yozai 是衍生字体**，少量汉字仍是日本写法：只用于预审过的固定批注短句（≤12 字），不写正文和客户自由文案。
 
-**Cabinet Grotesk**（Fontshare 免费商用）只做拉丁字标与域名。得意黑的拉丁字形脾气太大，
-`MeixiPro` / `meixipro.com` 需要一个端正的面。
+### 排版硬规则
 
-**LXGW WenKai 霞鹜文楷**（SIL OFL，ZeoSeven CDN id 292）只做红笔批改，**每套卡至多一次**。
-几何面染成红色不像手写，这个像。用第二次就不再是批注，只是另一种红字。
-
-### 「越大越轻」为什么在这里不成立
-
-宿主技能的通则是字越大字重越轻。那条规则是在拉丁语境下成立的：
-拉丁字母笔画少，超细字重放大后仍然清晰。中文不是 —— 200–300 字重的汉字放大到 100px 以上，
-在手机屏幕缩放后笔画会粘连成一团。
-
-本系统的解法不是废掉这条规则，是**重新分配它**：轻交给拉丁数字（Martian Mono 300），
-重留给中文（得意黑单字重，视觉约 500）。规则的精神（大字要透气）被保住，
-而汉字的可读性没有被牺牲。
-
-### 换装缝（花体字预留）
-
-`--display-zh` 是一等公民。要把中文 display 换成其他面（例如后续选定的免费商用花体字），
-只改这一行，模板结构与其余四个面全部不动：
-
-```css
-:root { --display-zh: "你的花体字", "Smiley Sans Oblique", "Noto Sans SC", sans-serif; }
-```
-
-换装前必须验三件事，缺一不换：授权允许商业使用且允许随包分发；覆盖到你实际要排的汉字
-（很多花体字只覆盖常用 3500 字，缺字会静默回退到下一个面，肉眼很难发现）；
-在 88–118px 下笔画不粘连。
-
-**这三件事已经有现成答案：`references/font-library.md`。** 53 款免费商用中文花体字，
-每款都带实测汉字覆盖数（`assets/font-library.json` 的 `cjkCount`）与逐款授权核验记录
-（`font-license-audit.md`）。把它接到这条缝上不需要改结构：
-
-```sh
-node scripts/build-font-links.mjs links sign       # 生成 <link> 粘进 <head>
-node scripts/check-font-coverage.mjs <task-dir>    # 验收第 2 条：缺字检查
-```
-
-`assets/template-greenbook-card.html` 里已经预置了 `FONT_LIBRARY_GREENBOOK_CARVE_OUT`
-区块与 `data-title-font` 开关：删掉注释标记并在 `<html>` 上加 `data-title-font="sign"`，
-`--display-zh` 就会接到对应令牌上，其余四个面与全部结构不动。
-注意字库走 CDN（Chromium 渲染时拉 woff2 分片），**不随包分发字体文件**，
-所以 "允许随包分发" 这一条在默认路径下不触发；一旦改用
-`build-font-links.mjs fetch` 把字体下载进交付目录，就要按 OFL 随附授权文件。
+- **教学英文永远比中文大**：单词 160–226px vs 中文注 36–44px；句型 56–72px。
+- **不用全大写、不用斜体表强调、不用花体**。强调只有一种：**错位荧光条**压在目标字母组合或关键词上（如 `wh`、`你的声音`）。
+- **英文单词字距为 0**：任何 `letter-spacing` 都会破坏拼读教学。
+- **中文标题 ≤3 行、每行 ≤9 字**，行末标点悬挂；正文左对齐、不两端对齐，每行 20–22 字。
+- **要读的内容 ≥36px**；24px 只给页脚元数据与页码。
+- **花体防糊**：Yozai 只有 400 单一字重，任何 `<h*>` / `<strong>` 上必须写死 `font-weight: 400; font-synthesis: none;`，渲染用 `deviceScaleFactor: 2` 再 Lanczos 缩到 1080。
+- **缺字检查**：中文标题进模板前跑 `node scripts/check-font-coverage.mjs <task-dir>`。
 
 ## Layout
 
-**唯一板型 1080×1440（3:4）。** 平台只吃这一个比例，不为它准备第二种板。
+**唯一板型 1080×1440（3:4）**，sRGB PNG。两平台共用这一板型。
 
-**三竖区制度**，由模板强制而非靠自觉：
+- **书脊**：左侧 56px 通栏 `--sea`，底部竖排 Literata 页码。缩略图里它就是一条蓝边，像一摞书里露出的书脊。
+- **内容区**：x 136–1000（864px 宽）；上边距 96。
+- **页脚线**：y 1288，1px `rgba(25,59,111,.24)`；线下一行左「英博伦 · 家庭共读手册」19–24px、右「03 / 08」Literata 28px。
+- **基线** 8px；正文行高 1.55–1.75；段落间距 ≥24px。
+- **6 栏网格**（可选）：栏宽 124px、槽 24px；封面标注 / 内页对照可用，但**禁止用网格装饰卡面**。
 
-| 区 | 范围 | 可否被裁 | 放什么 |
+### 封面解剖（C01 / W01 共用骨架）
+
+| 区 | 范围 | 放什么 | 可裁？ |
 |---|---|---|---|
-| `.zone-head` | y 0–416 | **可裁** | 字标、路线、运单抬头（Service / Sheet） |
-| `.zone-band` | y 416–1024 | **不可裁** | 论点：标签、数字、合计线、合计数 |
-| `.zone-foot` | y 1024–1440 | **可裁** | 附注、CTA、小程序码 |
+| 蓝区 | y 0–560（公众号首图 0–520） | 品牌行 + 英文书名行（Literata）+ 册号 | 公众号首图可裁 |
+| 标题区 | y 648–1090 | 中文三行宋体 124px + 荧光条 | 小红书不可裁 |
+| 正文区 | y 1120–1200 | 一句「今晚能做的一件事」38px | 小红书不可裁 |
+| 页脚 | y 1288–1330 | 页脚行 | 小红书可裁 |
 
-安全带 608px 是算出来的，不是拍的：微信常读列表把首图裁成 16:9，
-1080 × 9/16 = 607.5 → 608，居中则 (1440 − 608) / 2 = 416。
-**判定一张首图合格的唯一标准：把它裁成 y416–1024 那条带，论点是否还完整。**
-模板内置 `body[data-guides="on"]` 参考层可以直接看这个结果。
+- 封面只数得出四个形状：**蓝块、三行宋体、一条荧光黄、一个折角**。
+- 折角只在封面与收束页；88–132px，干净折角，露出纸面（`--paper-deep` 做背面），不做旧、无污渍、无撕边。
+- 缩到 360px，标题仍是 30.7px——这是全系统所有字号决策的依据。
+- 封面 **0 logo**；品牌只在书脊、页脚与收束页出现。
 
-**跨卡锁定基线。** 前三张图会在消息列表里并排成一条 2.35:1 缩略条
-（每格宽高比 2.35/3 ≈ 1:1.277，比源图 3:4 略宽，上下各只切约 30px —— 裁切不是问题，
-**并排才是**）。所以前三张必须共享标签基线与数字基线，横读成一行账：
-`12.80 元/磅 · 8–12 天 · 100%`。构图单位是三张卡，不是一张卡。
+### 竖版填充（3:4）
 
-**间距阶梯**沿用 Swiss 模板同一条（8/12/16/24/32/40/48/64/80/96/160），不另立一套，
-以便两个模式在同一次交付里混排时节奏一致。侧边距固定 96px。
-
-**竖版填充**遵循 `references/portrait-fill.md`：下 25% 空白是要改的味道。
-本系统的解法是给可裁区填上天然属于那里的单据内容（抬头、凭据条），
-而不是把内容硬塞进安全带 —— 塞进去会让安全带过载，反而伤论点。
+内容（标题 + 正文 + 页脚）必须覆盖 ≥75% 画布高度。下方留白只允许三种理由：一句宣言式 hero、照片插页自带呼吸、段落 leading。**禁止用 `flex:1` 上下夹击把内容塞到中段。**
 
 ## Elevation & Depth
 
-没有阴影，没有卡片，没有毛玻璃。深度全部由纸面层次表达：
-`--paper` 是纸，`--paper-rule` 是印在纸上的规线，`--ink` 是墨。
-一张单据不需要浮起来。
+没有阴影、发光、毛玻璃。
+深度全部由纸面层次表达：`--paper` 是纸、`--paper-soft` 是印在纸上的色块、`--ink` 是墨。
+唯一的「物理凸起」是**折角**：一块 132px 的三角形，露出 `--paper-deep` 背面 + 1px 折痕，不加投影光晕。
+照片插页允许一层偏移实影 `0 18px 38px rgba(25,59,111,.18)`——因为那确实是一张「贴在纸上」的照片。
 
 ## Shapes
 
-**圆角一律 0。** 方角是单据的形，圆角是 App 的形。这不是一个可调参数。
-唯一的例外是小程序码占位框，它是外部资产的容器，边框 2px 实线，同样方角。
+- **圆角一律 0px。** 方角是纸与书的形，圆角是 App 的形。
+- **唯一例外**：印章（`border-radius: 9999px`，圆形印章）与商标 logo 的圆形模切贴纸（若使用）。
+- 线一律 1px；**不得用 2px 以上的装饰描边**。
+- 折角、书脊、页脚线都是纸的物理边，不是装饰图形。
 
 ## Components
 
-- **`.board`** 1080×1440，`--paper` 底，`overflow:hidden`，`isolation:isolate`。
-- **`.airmail-edge`** 45° `repeating-linear-gradient`，红 22px / 纸 22px / 蓝 22px / 纸 22px，
-  上下各 14px 高。**这是 `--edge-blue` 唯一允许出现的地方。**
-- **`.rules`** 64px 步进的发丝横线，`opacity:.55`。纸的物质感由它承担，不加任何装饰形状。
-- **`.waybill`** 两栏运单抬头（Service / Sheet），上边框 2px `--ink`，下边框 1px `--text-warm`。
-- **`.ledger`** 账目表。标签左、数值右、`tabular-nums`、`white-space:nowrap`。
-  值列 44px，标签列 32px，注解 26px `--text-warm`。
-- **`.rule-total`** 4px `--verify` 实线。全卡唯一的品牌色横线，它标记「下面这个数是结论」。
-- **`.total-row` / `.tv`** 合计行。`.tv` 96px `--verify`。
-- **`.pen-strike`** 划掉的对照数字：文字 `--text-warm`，斜线 5px `--annotate` 旋转 −7°。
-- **`.pen-note`** 手写批注，`--hand` 面，44px `--annotate`，旋转 −4°。**每套卡至多一次。**
-- **`.stub`** 底部凭据条：附注 + CTA + 小程序码占位框（132×132，2px `--ink` 边）。
-- **`.crop-guide` / `.guide-tag`** 裁切参考层。由 `body[data-guides]` 开关，**导出前必须 off**。
+- **`.spine`**：56px 通栏 `--sea`，底部竖排页码（`writing-mode: vertical-rl`，旋转 180°）。
+- **`.phead`**：页眉元信息行，左小标签（19px 字距 .24em）+ 右 `VOL.03 · P.05`（Literata 19px），y 86。
+- **`.foot`**：页脚，1px 线 + 左品牌行 + 右页码，y 1288。**禁止用 `position:absolute` 压在会增长的内容上**，必须 `margin-top:auto` 流式承载。
+- **`.hl`（错位荧光条）**：`::before` 半高色块，左 −6px、右 −16px、下 0.04em、旋 −0.4°；文字在上。**每张卡最多 2 处。**
+- **`.dogear`（折角）**：132px 三角形，`linear-gradient(225deg, --paper-deep, --paper)` + 1px 折痕；只在封面 / 收束页。
+- **`.stamp`（印章）**：160px 圆形，3px 虚线 `--accent-pink`，旋 −7°；**只盖真实日期 / 真实完成状态**，不编造。
+- **`.photo-insert`（照片插页）**：白色 16px 边框、旋 −1.8°、偏移实影；只接受真实、已授权的家庭 / 孩子照片；不 AI、不摆拍图库。没有照片时整块删除，不留占位框。
+- **`.trace-cell`（描红格）**：74×88px 虚线 `--sky` 格，字母 `--sky` 色，供孩子描。每张词句卡最多 1 排（5–8 格）。
+- **`.record-row`（记录行）**：底部 1px 线；左标签 24px `--muted`、右手写值 42px。**模板字段留空**，不预填示例数据。
+- **`.bluefield`（蓝区）**：`--sea` 满宽；只放英文书名行（Literata）、册号、一句 ≤12 字短标题。
+- **`.ledger`（账本行）**：名称 + 进度条 + `Literata` 数字；数字 `tabular-nums`、单位 `nowrap`；用于 P07 / 公众号数据页。
 
-状态态（hover / focus / disabled）不适用：交付物是静态图片，没有交互态。
+## Page Recipes（内页 P01–P08，两平台共用）
+
+一套卡 6–9 页；封面 + 4–7 张内页 + 收束页。同一套内每页只承担一件事。
+
+| 配方 | 名字 | 用在哪 | 结构 |
+|---|---|---|---|
+| **P01** | 一句 | 观点 / 转折 / 金句 | 宋体 96px 主句（≤4 行）压荧光条；页边一条 Yozai 批注；允许 ≥1/3 留白。 |
+| **P02** | 双声部 | 亲子共读现场 | 左右两栏 + 1px 中线：大人（Noto Sans SC 38px，短句、可执行）/ 孩子（Andika 56px + Yozai 手写原话）。全系统唯一「两个人」。 |
+| **P03** | 步骤 | 方法 / 共读流程 | 纵向 01–05 + 一条竖线；每步 ≤24 字；无 icon，无箭头装饰；侧边可挂 1 条手写批注。 |
+| **P04** | 对照 | 路线 / 方法对比 | 两栏表头色带（`--paper-soft`）+ 每栏 ≤3 行；只比 2 个对象；胜出项压荧光条；**不用对勾 / 叉号图标**。 |
+| **P05** | 词句 | 每周一词 / 句型 | Andika 单词 226px + 音标（Charis SIL）+ 中文注 + 例句 Andika 52px + 描红格 + 一条家长提示；**英文永远最大**。 |
+| **P06** | 清单 | 今晚就能做 / 共读清单 | 宋体标题 72px + 6 行（5–7 行）方格清单；留 2 个空行；页脚上方一行手写「做到 N 条就很好」。 |
+| **P07** | 记录 | 学员成长 / 读书记录 | 4 行记录表（读的书 / 新学的词 / 最喜欢的一页 / 他的一句话）+ 印章（真实日期）；**字段留空**，不预填。 |
+| **P08** | 收束 | 末页 / 下一册预告 | 宋体 104px 两行 + 手写晚安句 + 96px 圆形 logo 出版者标记 + 下一册书名；**唯一允许出现 logo 的内页**。 |
+
+**可选组件（默认不渲染）：**
+- **照片插页**：只在这三种情况下加——用户提供真实亲子共读照片、品牌自有课程实拍、学员授权肖像。照片做「贴在书页上的照片」（白框、微旋、实影），不做满版人像封面。
+- **「画外音」引语**：P01 / P02 可加一条 Yozai 批注引语，单条 ≤12 字；每套最多 2 条。
+
+**空状态：**
+- 没有照片 → 整块删除，不留占位框。
+- 数字未确认 → `.pending` 虚线待补框，**不编造**。
+- 标题超限 → 先改文案；改不到 ≤3 行 × ≤9 字就换配方，绝不缩字到 <92px（缩略图不可读）。
+
+## 平台应用
+
+### 小红书（3:4 图文卡）
+
+- **封面**：C01 书封（默认）或 C02 照片插页封面（有真实照片时）。C01 封面骨架见「封面解剖」；C02 允许一张照片插页，仍保留蓝区、折角与页脚。
+- **页序**：C01 → P02 / P01 → P05 / P03 → P06 / P04 → P07 → P08。一套 6–9 页。
+- **信息流**：首图必须在双列 feed 1/6 缩放（180pt 宽）下仍认得出「蓝块 + 三行宋体 + 荧光条 + 折角」。
+- **文案**：描述真实家庭场景，不描述制作方法；不承诺「N 天开口 / 流利」；不编造学员数据。
+- **导出**：1080×1440 PNG，`deviceScaleFactor: 2` 渲染后 Lanczos 缩回。
+
+### 微信公众号「图片消息 / 小绿书 / 贴图号」
+
+- **首图 W01**：不是 C01 的裁剪，是另一张构图。蓝区 y 0–520（可裁）；标题两行 84–92px 落在 y 566–780；英文行 800；1px 线 862；册号 882。
+- **裁切数学**：16:9 常读列表裁切带 = y 416–1024；2.35:1 三图缩略条裁切带 = y 490–950；**唯一安全带 = y 490–950**。首图论点（标题 + 英文行 + 册号）必须完整落在带内。
+- **交付三张**：1080×1440、1080×608（16:9 验证）、1080×459（2.35:1 验证），肉眼确认标题一字不缺。
+- **前三张锁基线**：三张首图并排成 2.35:1 缩略条，页脚线 / 页码基线天然固定（y 1288 与书脊底部），横读不跳。
+- **内页**：复用 P01–P08；页脚右页码改成「公众号图片消息 · 03 / 07」；不写「收藏」话术，写「今晚就能做」。
+
+## Logo 使用
+
+- logo 由品牌方提供（本仓库不分发商标文件；模板里放 `assets/logo-embolen.png`，由任务目录提供）。
+- **封面 / 首图 0 logo**：品牌由「装订」（书脊 + 页脚 + 折角）承担。
+- **唯一允许位置**：P08 收束页的 96px 圆形出版者标记 + 页脚文字行。
+- logo 不重绘、不换色、不做 3D、不做表情包、不平铺、不旋转；圆形模切白边是唯一允许的容器。
 
 ## Do's and Don'ts
 
-- Do: 首图定稿前先开 `data-guides="on"`，确认裁成 y416–1024 后论点完整。
-- Do: 前三张共享标签基线与数字基线，横读成一条账。
-- Do: 数字一律 `tabular-nums` + `white-space:nowrap`，单位不许折行。
-- Do: 换租户只改 `--verify` 与三个品牌字符串，其余一律不动。
-- Do: 卡上每一个数字都要能在小程序里被复算出来；做不到就不要印在卡上。
-- Don't: **不要用 `$text-muted #CACCD1`。** 它在 `#fffaf1` 上只有 1.55:1，等于看不见。
-  暖底上的弱化文字一律走 `--text-warm #7c5922`。
-- Don't: 不要让 `--annotate` 承载正文。4.44:1 未过正文 AA，只许 ≥24px 粗体数字与划线。
-- Don't: 不要让 `--edge-blue` 离开 `.airmail-edge`。它一进版心就和 `--verify` 抢蓝。
-- Don't: 不要用第二次红笔。第二次起它就不是批注了。
-- Don't: 本类目专属反模式一个都不要 —— 蓝色渐变底、货机、地球、虚线航弧世界地图、
-  居中粗体的「专业 / 可靠 / 安全」、集装箱剪影、以及把中文标题放到最大而把价格缩成小字。
-- Don't: 不要加圆角、阴影、卡中卡、图标圆形底托、emoji 当装饰元素。
-- Don't: 不要把示例数字当真实报价发出去。
+- **Do:** 每张卡都放齐四个装订装置（书脊 / 页脚 / 荧光条 / 折角或页码），先保证「像一本书」，再谈内容。
+- **Do:** 英文单词永远比中文大；给孩子的英文一律 Andika，字距 0。
+- **Do:** 荧光条只压最关键 2–8 字 / 目标字母组合；每张卡最多 2 处。
+- **Do:** 记录页、清单页留空给真实填写；数字一律可核验，未确认就 `.pending`。
+- **Do:** 标题 ≤3 行 × ≤9 字；缩到 360px 眯眼 1 秒能读出来才算过。
+- **Don't:** 不做「儿童 App」：不用圆体卡通字、渐变、彩色椭圆底、卡通小孩、吉祥物表情包。
+- **Don't:** 不用 AI 生成儿童、图库假笑儿童照；真实照片只做「照片插页」。
+- **Don't:** 不把 `#4793D0` 当小字色；蓝底反白不 <22px 粗体；荧光黄不做字。
+- **Don't:** 不用 box-shadow 做卡片浮起、不用毛玻璃、不用发光、不用做旧滤镜 / 污渍 / 撕边。
+- **Don't:** 不编造数据、承诺、学员案例；不把制作要求（如「3 秒」「三连拼图」）写成卡面文案。
+- **Don't:** 封面不加 logo、不加价格、不加「点击购买」；把转化留给正文和评论区。
 
 ## Motion
 
-- **Approach:** 不适用。交付物是静态 PNG。
-- **The one authored moment:** 唯一可能的动效是 Live Photo 变体（走
-  `references/live-photo-production.md`）：秤上读数跳动到定格的那 2 秒。
-  动的必须是「被称量」这个动作本身，不是装饰性的镜头运动。
+- **Approach:** 默认静态高清 PNG（1080×1440，`deviceScaleFactor: 2` 超采样）。
+- **Live Photo（可选）**：小红书 `5s` / 公众号 `3s`。**唯一动作点**：一支荧光笔划过一句话，或一只手把书页折角。动的必须是「被用过」这个动作本身，不是装饰镜头运动；首帧仍按静态卡的全部规则验收。
+- **不做：** 翻页动画、悬浮装饰、粒子、光效。
 
 ## Decisions Log
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
-| 2026-09-22 | 建立 Greenbook 卡系统，方向定为「算式」Worked Arithmetic | 由 /design-consultation 产出。北极星「账算得清，不坑人」由项目负责人指定 |
-| 2026-09-22 | 主色取 `#0060C9` 而非 `#037EF3` | `config/tenants/meixipro.json` 为租户身份真源；`docs/TENANT_PROFILES.md` 明确警告 `#037EF3` 是兼容档案值，非生产身份 |
-| 2026-09-22 | 展开 `$airmail-red` / `$airmail-blue` 为品类识别装置 | 该 token 对在 variables.scss 中被注释为跨租户恒定的「国际航空信封边饰」，全仓仅用过一次。差异化资产已存在，无需发明 |
-| 2026-09-22 | 中文 display 选得意黑，公开违反宿主「越大越轻」 | 中文超细字重在手机端笔画粘连；改为「轻交给拉丁数字，重留给中文」，保住规则精神 |
-| 2026-09-22 | 正文选 Noto Sans SC，否决 MiSans L3 | MiSans 授权要求署名且禁止二次分发字体文件，与"随技能打包离线渲染"冲突。授权判定非审美判定 |
-| 2026-09-22 | 禁用 `$text-muted #CACCD1` | 实测对 `#fffaf1` 仅 1.55:1。由 Claude 独立设计声音提出，本文档补上实测值 |
-| 2026-09-22 | 安全带定为 y416–1024，前三张锁基线 | 微信常读列表 16:9 裁切与消息列表 2.35:1 三图条的实际行为（多来源二手一致，官方文档未直接公开）。跨卡构图思路来自 Claude 独立设计声音 |
-| 2026-09-22 | Codex 独立提案缺席 | 配置模型 `gpt-6-astra` 要求更高版本 Codex CLI（当前 v0.147.0），返回 400。未以其他模型顶替，外部覆盖记为 unavailable |
+| 2026-11-09 | 品牌由「美西转运 / MeixiPro」整体替换为「英博伦 Embolen」，删除全部物流业务内容 | 品牌方业务转向 1–12 岁英语学习成长；旧「封箱」「算式」两套物流卡系统不再适用 |
+| 2026-11-09 | 主色取 logo 鲸鱼蓝 `#4793D0`（k-means 主簇 25.3%）；同族深蓝 `#2C6390` 承担小字 | 品牌蓝对米纸仅 3.06:1，不能做小字色；做面积 + 线 + ≥64px 大字，小字用同族深蓝 |
+| 2026-11-09 | 方向「翻到起毛边」：不做儿童英语品牌，做被翻旧的家庭共读手册 | 由 /design-consultation 产出；独立设计声音提出「品牌做装订、温暖靠物证」，主提案采纳并修正字体与照片策略 |
+| 2026-11-09 | 中文标题用 Noto Serif SC 900，公开逆行品类圆体 | 品类被儿童 App 视觉占满；宋体把气质从 App 拉到出版物，900 字重保 360px 可读 |
+| 2026-11-09 | 教学英文用 Andika（SIL 识字设计），并禁止英文单词字距 | 教育品牌的专业可信度来自「孩子看到的就是他要写的字」 |
+| 2026-11-09 | 独立声音推荐的 Fraunces 换成 Literata | Fraunces 在宿主「过度使用 display 脸」清单内，不能做 display 声部；Literata 同为书籍气质且 OFL |
+| 2026-11-09 | 照片策略：不用 AI / 图库儿童，真实照片只做「照片插页」 | 保留品牌真实素材能力，同时规避假照片信任风险 |
+| 2026-11-09 | 两平台共用一套品牌层与页面配方，平台差异只在封面构图与导出验证 | 品牌一致性优先；小红书与公众号图片消息共用 3:4 板型与内页 |

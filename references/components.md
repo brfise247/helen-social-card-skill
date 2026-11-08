@@ -1,8 +1,9 @@
 # Components
 
 Shared component spec for the Editorial and Swiss seed templates.
-**Greenbook（贴图号 / 小绿书）模板不遵循本文件。** 它有自己的字体栈、字号阶梯与竖区制度，
-全部定义在根目录 `DESIGN.md`，平台规格见 `greenbook-specs.md`。 Read this when you need to look up a class, a font size, or a hard rule that recurs across recipes. Per-recipe details live in `layout-recipes.md`; per-theme color tokens live in `theme-presets.md`.
+**英博伦 Embolen 品牌卡不遵循本文件。** 它的组件（书脊 / 页脚 / 折角 / 荧光条 / 照片插页 / 描红格）
+与字号阶梯全部定义在根目录 `DESIGN.md`，平台规格见 `greenbook-specs.md`。
+本文件只服务 Editorial / Swiss：Read this when you need to look up a class, a font size, or a hard rule that recurs across recipes. Per-recipe details live in `layout-recipes.md`; per-theme color tokens live in `theme-presets.md`.
 
 ## Font Stacks
 

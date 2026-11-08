@@ -170,96 +170,142 @@ mustInclude(
 );
 
 mustInclude(
-  "DESIGN-xhs.md",
-  "X01 真仓大片",
-  "DESIGN-xhs defines X01 full-bleed cover as default",
+  "DESIGN.md",
+  "翻到起毛边",
+  "DESIGN.md defines the Embolen book-page design system",
 );
 mustInclude(
-  "DESIGN-xhs.md",
-  "X02 骑缝封箱",
-  "DESIGN-xhs defines X02 seam-taped comparison recipe",
+  "DESIGN.md",
+  "#4793D0",
+  "DESIGN.md records the whale-blue brand primary extracted from the logo",
 );
 mustInclude(
-  "DESIGN-xhs.md",
-  "X03 国际提单",
-  "DESIGN-xhs defines X03 freight manifest recipe",
+  "DESIGN.md",
+  "Noto Serif SC",
+  "DESIGN.md pins the Chinese serif display face",
 );
 mustInclude(
-  "DESIGN-xhs.md",
-  "X04 实物批注",
-  "DESIGN-xhs defines X04 detail callout recipe",
+  "DESIGN.md",
+  "Andika",
+  "DESIGN.md pins the literacy Latin face for teaching English",
 );
 mustInclude(
-  "DESIGN-xhs.md",
-  "X05 核对清单",
-  "DESIGN-xhs defines X05 checklist recipe",
+  "DESIGN.md",
+  "W01",
+  "DESIGN.md defines the WeChat first-image recipe",
 );
 mustInclude(
-  "DESIGN-xhs.md",
-  "defaultEnabled: false",
-  "DESIGN-xhs disables .tally by default",
+  "DESIGN.md",
+  "P05",
+  "DESIGN.md defines the inner-page recipes",
 );
 mustInclude(
-  "DESIGN-xhs.md",
-  "font-synthesis: none",
-  "DESIGN-xhs enforces calligraphy anti-blur font-synthesis rule",
-);
-mustInclude(
-  "DESIGN-xhs.md",
-  "禁止把封面切成「上半照片 + 下半满宽贴边死白底",
-  "DESIGN-xhs documents vetoed flat-bottom split-card cover anti-pattern",
+  "DESIGN.md",
+  "y 490–950",
+  "DESIGN.md records the WeChat 16:9 ∩ 2.35:1 safe band",
 );
 mustInclude(
   "SKILL.md",
-  "Use the 封箱 (Taped Shut) template (`X01`–`X05`)",
-  "SKILL.md routes Meixi XHS notes to X01-X05 recipes",
+  "英博伦 Embolen brand notes",
+  "SKILL.md routes Embolen brand notes",
 );
 mustInclude(
   "SKILL.md",
-  "Do NOT render `.tally`（「正」字）unless the user explicitly requests a pitfall-counting",
-  "SKILL.md guards .tally as explicit opt-in only",
+  "`P01`–`P08`",
+  "SKILL.md lists the inner-page recipes",
 );
 mustInclude(
-  "assets/template-xhs-card.html",
-  'data-recipe="X01"',
-  "XHS seed template includes X01",
+  "SKILL.md",
+  "book-page",
+  "SKILL.md names the book-page seed template",
 );
 mustInclude(
-  "assets/template-xhs-card.html",
-  'data-recipe="X02"',
-  "XHS seed template includes X02",
+  "HANDOFF.md",
+  "### v0.16 · 2026-11-09",
+  "handoff records the Embolen brand migration",
 );
 mustInclude(
-  "assets/template-xhs-card.html",
-  'data-recipe="X03"',
-  "XHS seed template includes X03",
+  "references/greenbook-specs.md",
+  "W01",
+  "greenbook specs define the W01 first image",
 );
 mustInclude(
-  "assets/template-xhs-card.html",
-  'data-recipe="X04"',
-  "XHS seed template includes X04",
+  "references/greenbook-specs.md",
+  "2.35:1",
+  "greenbook specs keep the 2.35:1 crop math",
 );
 mustInclude(
-  "assets/template-xhs-card.html",
-  'data-recipe="X05"',
-  "XHS seed template includes X05",
+  "references/brand-presets/embolen.md",
+  "#4793D0",
+  "brand preset records the whale-blue primary",
 );
+
+for (const recipe of ["C01", "C02", "P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08"]) {
+  mustInclude(
+    "assets/template-xhs-card.html",
+    `data-recipe="${recipe}"`,
+    `XHS seed template includes ${recipe}`,
+  );
+}
 mustInclude(
   "assets/template-xhs-card.html",
   "font-synthesis: none",
   "XHS seed template prevents calligraphy faux-bold synthesis",
 );
+
+for (const recipe of ["W01", "P01", "P02", "P03", "P04", "P05", "P06", "P07", "P08"]) {
+  mustInclude(
+    "assets/template-greenbook-card.html",
+    `data-recipe="${recipe}"`,
+    `WeChat seed template includes ${recipe}`,
+  );
+}
+mustInclude(
+  "assets/template-greenbook-card.html",
+  "data-guides",
+  "WeChat seed template ships the crop-guide overlay",
+);
+mustInclude(
+  "assets/template-greenbook-card.html",
+  "font-synthesis:none",
+  "WeChat seed template prevents calligraphy faux-bold synthesis",
+);
+
 checks.push(() => {
-  const activeHtml = fileText("assets/template-xhs-card.html").replace(/<!--[\s\S]*?-->/g, "");
-  const ok = !/<svg[^>]*class="[^"]*\btally\b/.test(activeHtml);
+  const ok = !fs.existsSync("DESIGN-xhs.md");
   return {
     ok,
-    label: "XHS seed template has no active .tally SVG by default",
+    label: "superseded DESIGN-xhs.md is removed",
     detail: ok
-      ? "assets/template-xhs-card.html keeps .tally commented out by default"
-      : "assets/template-xhs-card.html must not contain active <svg class=\"tally\"> by default",
+      ? "DESIGN-xhs.md is gone; the brand system lives in DESIGN.md"
+      : "DESIGN-xhs.md must be removed (superseded by DESIGN.md)",
   };
 });
+
+for (const file of ["SKILL.md", "CLAUDE.md", "AGENT.md", "README.md", "README.en.md"]) {
+  checks.push(() => {
+    const hit = fileText(file).match(/美西|杨美西|Meixi|meixipro|封箱|waybill|集运/);
+    return {
+      ok: !hit,
+      label: `${file} has no legacy brand/logistics copy`,
+      detail: hit ? `${file} still contains "${hit[0]}"` : `${file} is free of legacy brand/logistics copy`,
+    };
+  });
+}
+
+for (const file of ["assets/template-xhs-card.html", "assets/template-greenbook-card.html"]) {
+  checks.push(() => {
+    const active = fileText(file).replace(/<!--[\s\S]*?-->/g, "");
+    const hit = active.match(/美西|杨美西|Meixi|meixipro|封箱|面单|waybill|airmail|tally/i);
+    return {
+      ok: !hit,
+      label: `${file} active markup has no legacy logistics components`,
+      detail: hit
+        ? `${file} still contains "${hit[0]}" outside comments`
+        : `${file} active markup is free of legacy logistics components`,
+    };
+  });
+}
 
 let failed = 0;
 for (const run of checks) {

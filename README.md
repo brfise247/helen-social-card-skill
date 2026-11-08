@@ -12,14 +12,15 @@
 
 一个适配 Claude Code / Codex 等 Agent 环境的图文卡片技能,用于从文章、文案、截图、产品笔记、字幕、照片或用户视频生成**小红书 / Rednote 图文组图**、**Live Photo 动态卡**与**公众号 21:9 + 1:1 封面对**。
 
-内置两套视觉系统,共用一份图文工作流:
+内置三套视觉系统,共用一份图文工作流:
 
 - **电子杂志风(Editorial)**。像 *Monocle* / *Kinfolk* / *Cereal* 那样克制的版面,适合叙事、生活方式、旅行、阅读、影视、个人观察。
 - **瑞士国际主义(Swiss)**。网格、单一锚点色、直角发丝线、极致字号对比,适合产品测评、数据、方法论、教程、AI 工具。
+- **英博伦 Embolen「翻到起毛边」品牌卡**。米纸、双色蓝墨与一支荧光笔,把英语陪读做成一本会被翻旧、会被写字的家庭共读手册;一套品牌系统,小红书 3:4 与公众号图片消息两个平台外壳。
 
 > 这个 Skill 是 [guizang-ppt-skill](https://github.com/op7418/guizang-ppt-skill) 的姊妹项目,共享美学语言但独立维护。PPT 解决"横向翻页演讲",这里解决"静态信息流图文"。
 
-> 本仓是 [op7418/guizang-social-card-skill](https://github.com/op7418/guizang-social-card-skill)(AGPL-3.0)的衍生版本,沿用其 Editorial / Swiss 两套视觉系统与工作流,并扩展了公众号图片消息(小绿书 · 贴图号)卡系统、杨美西转运小红书「封箱」卡系统与 52 款免费商用中文花体字库。上游署名与许可证按原样保留,见 `LICENSE` 与 `AGENT.md`。
+> 本仓是 [op7418/guizang-social-card-skill](https://github.com/op7418/guizang-social-card-skill)(AGPL-3.0)的衍生版本,沿用其 Editorial / Swiss 两套视觉系统与工作流,并扩展了英博伦 Embolen「翻到起毛边」家庭共读手册卡系统(一套品牌系统,小红书 3:4 与公众号图片消息两套平台外壳)与 52 款免费商用中文花体字库。上游署名与许可证按原样保留,见 `LICENSE` 与 `AGENT.md`。
 
 > 本仓前身为 [szkkb/meixi-social-card-skill](https://github.com/szkkb/meixi-social-card-skill),2026-11 起更名为本仓,继续以 AGPL-3.0 开源。
 
@@ -267,11 +268,14 @@ helen-social-card-skill/
 ├── README.md                             ← 本文件
 ├── HANDOFF.md                            ← 交接文档:事实 + 版本历史
 ├── PRODUCT.md                            ← 产品文档:思考 + 决策 + roadmap
+├── DESIGN.md                             ← 英博伦 Embolen 品牌设计真源(纸/墨/荧光笔 + 两平台配方)
 ├── validate-social-deck.mjs              ← Playwright 版式校验脚本
 ├── scripts/                              ← Live Photo 打包 / 抽帧 / 文档测试脚本
 ├── assets/
 │   ├── template-editorial-card.html      ← Editorial 种子(6 主题 / 3 画板)
 │   ├── template-swiss-card.html          ← Swiss 种子(4 accent / 3 画板)
+│   ├── template-xhs-card.html            ← 英博伦 Embolen 小红书种子(C01/C02 + P01–P08)
+│   ├── template-greenbook-card.html      ← 英博伦 Embolen 公众号图片消息种子(W01 + P01–P08)
 │   ├── magazine-bg-webgl.js              ← WebGL 墨流背景
 │   └── screenshot-backgrounds/           ← 9 张截图舞台底(WebP)
 │       ├── style-a/                      ←   Editorial 5 套
@@ -280,6 +284,10 @@ helen-social-card-skill/
     ├── platform-specs.md                 ← 平台 × 分辨率 × 命名
     ├── style-system.md                   ← 两种风格的硬规则与反模式
     ├── theme-presets.md                  ← 10 套色票详解
+    ├── greenbook-specs.md                ← 公众号图片消息平台规格 + W01 裁切安全带
+    ├── brand-presets/embolen.md          ← 英博伦品牌预设(色板 / 使用规则 / 内容边界)
+    ├── font-library.md                   ← 52 款免费商用中文花体字库(Editorial / Swiss 用)
+    ├── font-license-audit.md             ← 字体授权核验记录
     ├── layout-recipes.md                 ← 28 个版式骨架(M01-M16 + S01-S12)
     ├── components.md                     ← 字体 / 卡片 / 间距 / 图标
     ├── background-systems.md             ← 墨流 / 网格 / 纸纹层
