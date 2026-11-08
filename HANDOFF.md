@@ -1,4 +1,4 @@
-# Handoff — guizang-social-card-skill
+# Handoff — helen-social-card-skill
 
 最后更新：2026-07-01 · 版本：v0.15（Live Photo 生产规则：3s/5s 平台限制、拼图版式、长视频处理、发布提醒、可见文案与不自造规则）
 
@@ -11,7 +11,7 @@
 ## 1. 目录结构（事实版）
 
 ```
-guizang-social-card-skill/
+helen-social-card-skill/
 ├── SKILL.md                   # 7 步工作流入口
 ├── HANDOFF.md                 # 本文件
 ├── PRODUCT.md                 # 产品思考

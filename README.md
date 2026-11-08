@@ -1,7 +1,7 @@
-# Guizang Social Card Skill · 小红书图文 / 公众号封面对
+# Helen Social Card Skill · 小红书图文 / 公众号封面对
 
-![GitHub stars](https://img.shields.io/github/stars/szkkb/meixi-social-card-skill?style=flat-square)
-![License](https://img.shields.io/github/license/szkkb/meixi-social-card-skill?style=flat-square)
+![GitHub stars](https://img.shields.io/github/stars/brfise247/helen-social-card-skill?style=flat-square)
+![License](https://img.shields.io/github/license/brfise247/helen-social-card-skill?style=flat-square)
 ![Skill](https://img.shields.io/badge/Skill-Agent-111111?style=flat-square)
 ![Social Cards](https://img.shields.io/badge/Social-Cards-FF4D6D?style=flat-square)
 ![Live Photo](https://img.shields.io/badge/Live%20Photo-Motion%20Cards-002FA7?style=flat-square)
@@ -21,24 +21,26 @@
 
 > 本仓是 [op7418/guizang-social-card-skill](https://github.com/op7418/guizang-social-card-skill)(AGPL-3.0)的衍生版本,沿用其 Editorial / Swiss 两套视觉系统与工作流,并扩展了公众号图片消息(小绿书 · 贴图号)卡系统、杨美西转运小红书「封箱」卡系统与 52 款免费商用中文花体字库。上游署名与许可证按原样保留,见 `LICENSE` 与 `AGENT.md`。
 
+> 本仓前身为 [szkkb/meixi-social-card-skill](https://github.com/szkkb/meixi-social-card-skill),2026-11 起更名为本仓,继续以 AGPL-3.0 开源。
+
 ![Guizang Social Card Skill 效果展示](https://github.com/user-attachments/assets/d370abcc-1fc4-4de1-903a-09020a6556ce)
 
 ## 30 秒开始
 
 ```bash
-npx skills add https://github.com/szkkb/meixi-social-card-skill --skill meixi-social-card-skill
+npx skills add https://github.com/brfise247/helen-social-card-skill --skill helen-social-card-skill
 ```
 
 也可以直接把这段话发给有 shell 权限的 AI Agent:
 
 ```text
-帮我安装 meixi-social-card-skill。请把 https://github.com/szkkb/meixi-social-card-skill 克隆到 ~/.claude/skills/meixi-social-card-skill,安装完成后检查 SKILL.md、assets/、references/ 是否存在。
+帮我安装 helen-social-card-skill。请把 https://github.com/brfise247/helen-social-card-skill 克隆到 ~/.claude/skills/helen-social-card-skill,安装完成后检查 SKILL.md、assets/、references/ 是否存在。
 ```
 
 已经安装过的话,用这段话更新:
 
 ```text
-帮我更新 meixi-social-card-skill。请进入 ~/.claude/skills/meixi-social-card-skill 执行 git pull,然后告诉我当前最新 commit。
+帮我更新 helen-social-card-skill。请进入 ~/.claude/skills/helen-social-card-skill 执行 git pull,然后告诉我当前最新 commit。
 ```
 
 安装后直接对 Agent 说:
@@ -162,16 +164,16 @@ Live Photo 在这个 Skill 里的定位是"把用户提供的视频装进社交�
 ### 方式一:一行命令安装(推荐)
 
 ```bash
-npx skills add https://github.com/szkkb/meixi-social-card-skill --skill meixi-social-card-skill
+npx skills add https://github.com/brfise247/helen-social-card-skill --skill helen-social-card-skill
 ```
 
 ### 方式二:把下面这段话直接发给 AI
 
-> 帮我安装 `meixi-social-card-skill` 这个 Claude Code skill。请按下面步骤做:
+> 帮我安装 `helen-social-card-skill` 这个 Claude Code skill。请按下面步骤做:
 >
 > 1. 确保 `~/.claude/skills/` 目录存在(不存在就创建)
-> 2. 执行 `git clone https://github.com/szkkb/meixi-social-card-skill.git ~/.claude/skills/meixi-social-card-skill`
-> 3. 验证:`ls ~/.claude/skills/meixi-social-card-skill/` 应该看到 `SKILL.md`、`assets/`、`references/` 三项
+> 2. 执行 `git clone https://github.com/brfise247/helen-social-card-skill.git ~/.claude/skills/helen-social-card-skill`
+> 3. 验证:`ls ~/.claude/skills/helen-social-card-skill/` 应该看到 `SKILL.md`、`assets/`、`references/` 三项
 > 4. 告诉我装好了,之后我说"做一套小红书图文"之类的话就会触发这个 skill
 
 把这段话复制粘贴给 Claude Code / Cursor / 任何有 shell 权限的 AI Agent,它会自动完成安装。
@@ -179,7 +181,7 @@ npx skills add https://github.com/szkkb/meixi-social-card-skill --skill meixi-so
 ### 方式三:手动命令行
 
 ```bash
-git clone https://github.com/szkkb/meixi-social-card-skill.git ~/.claude/skills/meixi-social-card-skill
+git clone https://github.com/brfise247/helen-social-card-skill.git ~/.claude/skills/helen-social-card-skill
 ```
 
 ### 触发方式
@@ -260,7 +262,7 @@ node validate-social-deck.mjs path/to/task-dir
 ## 目录结构
 
 ```
-meixi-social-card-skill/
+helen-social-card-skill/
 ├── SKILL.md                              ← Skill 主文件:7 步工作流
 ├── README.md                             ← 本文件
 ├── HANDOFF.md                            ← 交接文档:事实 + 版本历史

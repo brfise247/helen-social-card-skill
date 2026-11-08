@@ -1,7 +1,7 @@
-# meixi-social-card-skill — 改这个仓之前必读
+# helen-social-card-skill — 改这个仓之前必读
 
 本仓是 `op7418/guizang-social-card-skill`（AGPL-3.0）的衍生，远端
-`szkkb/meixi-social-card-skill`。**2026-10-12 起是公开仓库**，按 AGPL-3.0 分发：
+`brfise247/helen-social-card-skill`。**2026-11-09 起以公开仓库形式发布**，按 AGPL-3.0 分发：
 拿到本仓的人都可以在同样以 AGPL-3.0 开源的前提下使用、改造、再分发；想要非 AGPL
 条款的走上游 `COMMERCIAL_LICENSING.md`。上游署名（LICENSE / README / AGENT.md）
 一律保留，不得删改。
@@ -16,6 +16,10 @@
 - 新增顶层文件后，`~/.claude` 和 `~/.agents` 不会自动出现该文件
   （它们的软链是安装时快照的），必须手工补链，否则那两个宿主读不到。
 
+> 注：这一节描述的是本仓原作者机器上的多宿主安装拓扑。本仓独立发布后，
+> 机器上没有这些目录不影响使用；只要 `~/.dsh/skills` 或 `~/.claude/skills`
+> 里有一条指向本仓的链接，宿主就能读到这个技能。
+
 ## ★ 提交之后必须推进 hermes 登记表的 ref
 
 `hermes_codex_install_pack_optimized/external-skills.json` 按**固定 SHA**
@@ -23,14 +27,18 @@
 `setup_external_skills.sh --update-refs` 就会把本仓 checkout 回旧 SHA，
 六个宿主的工作区同时丢掉新内容。
 
+> 注：这一节是原作者机器上的 pack 约定。本机没有
+> `~/hermes_codex_install_pack_optimized` 时，这一步不适用，跳过即可；
+> 不要为此去新建登记表。
+
 提交后两步收尾，缺一不可：
 
 ```bash
 git push
 cd ~/hermes_codex_install_pack_optimized \
-  && ./scripts/setup_external_skills.sh --bump-ref=meixi-social-card-skill \
+  && ./scripts/setup_external_skills.sh --bump-ref=helen-social-card-skill \
   && git add external-skills.json \
-  && git commit -m "chore: bump meixi-social-card-skill ref" && git push
+  && git commit -m "chore: bump helen-social-card-skill ref" && git push
 ```
 
 `--bump-ref` 会一次改掉 `ref`、`ref_date`、`last_updated` 三处，
